@@ -27,7 +27,8 @@
         "./*"
       ]
     },
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "6.0",
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",

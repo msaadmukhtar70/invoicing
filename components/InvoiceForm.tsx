@@ -84,14 +84,35 @@ const currencyMeta: {
   colorClass?: string;
 }[] = [
   { code: "USD", symbol: "$", Icon: DollarSign, colorClass: "bg-blue-100 text-blue-600" },
-  { code: "EUR", symbol: "€", Icon: Euro, colorClass: "bg-indigo-100 text-indigo-600" },
-  { code: "GBP", symbol: "£", Icon: PoundSterling, colorClass: "bg-purple-100 text-purple-600" },
-  { code: "JPY", symbol: "¥", Icon: JapaneseYen, colorClass: "bg-rose-100 text-rose-500" },
+  { code: "EUR", symbol: "\u20AC", Icon: Euro, colorClass: "bg-indigo-100 text-indigo-600" },
+  { code: "GBP", symbol: "\u00A3", Icon: PoundSterling, colorClass: "bg-purple-100 text-purple-600" },
+  { code: "JPY", symbol: "\u00A5", Icon: JapaneseYen, colorClass: "bg-rose-100 text-rose-500" },
   { code: "CHF", symbol: "CHF", Icon: SwissFranc, colorClass: "bg-red-100 text-red-500" },
-  { code: "CNY", symbol: "¥", Icon: JapaneseYen, colorClass: "bg-orange-100 text-orange-500" },
+  { code: "CNY", symbol: "\u00A5", Icon: JapaneseYen, colorClass: "bg-orange-100 text-orange-500" },
   { code: "MXN", symbol: "$", Icon: DollarSign, colorClass: "bg-emerald-100 text-emerald-600" },
-  { code: "BTC", symbol: "₿", Icon: Bitcoin, colorClass: "bg-amber-100 text-amber-600" },
+  { code: "BTC", symbol: "\u20BF", Icon: Bitcoin, colorClass: "bg-amber-100 text-amber-600" },
 ];
+
+const cloneInvoice = (invoice: Invoice): Invoice => {
+  if (typeof structuredClone === "function") {
+    return structuredClone(invoice);
+  }
+
+  const cloneUnknown = (value: unknown): unknown => {
+    if (Array.isArray(value)) {
+      return value.map((item) => cloneUnknown(item));
+    }
+    if (value && typeof value === "object") {
+      return Object.entries(value as Record<string, unknown>).reduce<Record<string, unknown>>((acc, [key, val]) => {
+        acc[key] = cloneUnknown(val);
+        return acc;
+      }, {});
+    }
+    return value;
+  };
+
+  return cloneUnknown(invoice) as Invoice;
+};
 
 export default function InvoiceForm({
   initial,
@@ -112,7 +133,10 @@ export default function InvoiceForm({
   });
 
   React.useEffect(() => {
-    const subscription = watch((value) => value && onChange(value as Invoice));
+    const subscription = watch((value) => {
+      if (!value) return;
+      onChange(cloneInvoice(value as Invoice));
+    });
     return () => subscription.unsubscribe();
   }, [watch, onChange]);
 
