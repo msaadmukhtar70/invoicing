@@ -52,7 +52,7 @@ const CompanySection: React.FC<CompanySectionProps> = ({ form, className }) => {
         </div>
         <div>
           <label className={labelClass} htmlFor="fromPhone">
-            Number Phone
+            Phone Number
           </label>
           <input id="fromPhone" className={`${inputClass} mt-2 rounded-full`} {...register("from.phone")} />
         </div>

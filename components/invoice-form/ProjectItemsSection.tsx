@@ -22,11 +22,14 @@ const ProjectItemsSection: React.FC<ProjectItemsSectionProps> = ({ form, classNa
     name: "items",
   });
 
+  // Watching the entire array keeps the implementation simple; consider field-level controllers
+  // if this section becomes a performance hotspot with many rows.
   const itemsList = useWatch({ control, name: "items" }) as InvoiceFormValues["items"];
   const selectedCurrency = useWatch({ control, name: "currency" }) as CurrencyCode | undefined;
   const currencySymbolValue = useWatch({ control, name: "currencySymbol" }) as string | undefined;
 
   const currencySymbol =
+    // Prefer user-entered symbol, then fall back to metadata so totals remain consistent.
     currencySymbolValue ??
     (selectedCurrency ? currencyMetaByCode[selectedCurrency]?.symbol : undefined) ??
     "$";

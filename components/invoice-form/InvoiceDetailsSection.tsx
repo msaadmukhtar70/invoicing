@@ -27,6 +27,7 @@ const monthOptions: PillOption[] = [
   { label: "Dec", detail: "December" },
 ];
 
+// Treat invoice dates as local calendar days and fall back to "today" when parsing fails.
 const parseDateParts = (value: string | undefined): DateParts => {
   if (!value) {
     const today = new Date();

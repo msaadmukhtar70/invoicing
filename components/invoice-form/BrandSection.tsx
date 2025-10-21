@@ -53,6 +53,7 @@ const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
   );
 
   const handleCustomHexInputChange = React.useCallback(
+    // Normalise arbitrary user input into a valid #RRGGBB string before applying it.
     (value: string) => {
       const upper = value.toUpperCase();
       const cleaned = upper.replace(/[^0-9A-F#]/g, "");

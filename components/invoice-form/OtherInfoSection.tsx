@@ -38,6 +38,7 @@ const OtherInfoSection: React.FC<OtherInfoSectionProps> = ({ form, className }) 
 
   const handleCurrencyPick = React.useCallback(
     (code: CurrencyCode) => {
+      // Keep currency code and symbol in sync with the shared metadata in constants.ts.
       const meta = currencyMetaByCode[code];
       setValue("currency", code, { shouldDirty: true, shouldTouch: true, shouldValidate: true });
       setValue("currencySymbol", meta.symbol, { shouldDirty: true, shouldTouch: true });

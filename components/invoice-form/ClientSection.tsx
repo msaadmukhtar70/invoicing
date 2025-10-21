@@ -16,11 +16,11 @@ const ClientSection: React.FC<ClientSectionProps> = ({ form, className }) => {
   const clientPhoto = useWatch({ control, name: "to.photoDataUrl" }) as string | undefined;
   const clientPhotoRef = React.useRef<HTMLInputElement>(null);
 
-  const chooseClientPhoto = React.useCallback(() => {
+  const handleChooseClientPhoto = React.useCallback(() => {
     clientPhotoRef.current?.click();
   }, []);
 
-  const onClientPhotoSelect = React.useCallback(
+  const handleClientPhotoSelect = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (!file) return;
@@ -33,7 +33,7 @@ const ClientSection: React.FC<ClientSectionProps> = ({ form, className }) => {
     [setValue]
   );
 
-  const clearClientPhoto = React.useCallback(() => {
+  const handleClearClientPhoto = React.useCallback(() => {
     setValue("to.photoDataUrl", "", { shouldDirty: true });
     if (clientPhotoRef.current) {
       clientPhotoRef.current.value = "";
@@ -79,7 +79,7 @@ const ClientSection: React.FC<ClientSectionProps> = ({ form, className }) => {
           <div className="relative mt-2">
             <button
               type="button"
-              onClick={chooseClientPhoto}
+              onClick={handleChooseClientPhoto}
               className="flex h-32 w-full items-center justify-center rounded-[28px] border border-slate-200 bg-white text-slate-400 shadow-inner transition hover:border-brix-blue/40"
             >
               {clientPhoto ? (
@@ -89,11 +89,11 @@ const ClientSection: React.FC<ClientSectionProps> = ({ form, className }) => {
                 <span className="text-sm font-semibold">Upload photo</span>
               )}
             </button>
-            <input ref={clientPhotoRef} type="file" accept="image/*" className="hidden" onChange={onClientPhotoSelect} />
+            <input ref={clientPhotoRef} type="file" accept="image/*" className="hidden" onChange={handleClientPhotoSelect} />
             {clientPhoto && (
               <button
                 type="button"
-                onClick={clearClientPhoto}
+                onClick={handleClearClientPhoto}
                 className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm transition hover:border-brix-blue hover:text-brix-blue"
                 aria-label="Remove client photo"
               >
