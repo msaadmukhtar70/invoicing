@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import rfdc from "rfdc";
 
 import { defaultBrandColor } from "@/lib/colors";
 import { defaultGradientId } from "@/lib/gradients";
@@ -16,33 +17,20 @@ import ProjectItemsSection from "./invoice-form/ProjectItemsSection";
 import type { InvoiceFormResolvedValues, InvoiceFormValues } from "./invoice-form/schema";
 import { invoiceFormSchema } from "./invoice-form/schema";
 
+const fallbackClone = rfdc();
+
+function deepClone<T>(value: T): T {
+  if (typeof structuredClone === "function") {
+    return structuredClone(value);
+  }
+  return fallbackClone(value);
+}
+
 // Align loosely typed form values with the stricter persisted Invoice shape.
 const toInvoice = (values: InvoiceFormValues): Invoice => ({
   ...values,
   currencySymbol: values.currencySymbol ?? "",
 }) as Invoice;
-
-const cloneInvoice = (invoice: Invoice): Invoice => {
-  // Prefer the native deep-clone to keep behaviour consistent across environments.
-  if (typeof structuredClone === "function") {
-    return structuredClone(invoice);
-  }
-
-  const cloneUnknown = (value: unknown): unknown => {
-    if (Array.isArray(value)) {
-      return value.map((item) => cloneUnknown(item));
-    }
-    if (value && typeof value === "object") {
-      return Object.entries(value as Record<string, unknown>).reduce<Record<string, unknown>>((acc, [key, val]) => {
-        acc[key] = cloneUnknown(val);
-        return acc;
-      }, {});
-    }
-    return value;
-  };
-
-  return cloneUnknown(invoice) as Invoice;
-};
 
 export default function InvoiceForm({
   initial,
@@ -72,7 +60,7 @@ export default function InvoiceForm({
     // Subscribe to value changes and emit a safe copy upstream.
     const subscription = watch(() => {
       const current = getValues();
-      onChange(cloneInvoice(toInvoice(current)));
+      onChange(deepClone(toInvoice(current)));
     });
     return () => subscription.unsubscribe();
   }, [getValues, watch, onChange]);
