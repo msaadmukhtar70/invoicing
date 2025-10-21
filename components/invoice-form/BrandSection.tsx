@@ -2,9 +2,11 @@ import React from "react";
 import { Check, X } from "lucide-react";
 import { useWatch } from "react-hook-form";
 
-import { popularBrandColors, defaultBrandColor, NO_BRAND_COLOR } from "@/lib/colors";
+import { mixHexColors, popularBrandColors, defaultBrandColor, NO_BRAND_COLOR } from "@/lib/colors";
+import { defaultGradientId, gradientOptions } from "@/lib/gradients";
+import type { GradientId } from "@/lib/gradients";
 
-import { hexColorRegExp, labelClass, sectionClass } from "./constants";
+import { hexColorRegExp, labelClass, sectionClass, dashboardAccentColor } from "./constants";
 import type { InvoiceFormContext } from "./formTypes";
 
 type BrandSectionProps = {
@@ -17,6 +19,7 @@ const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
 
   const brandLogo = useWatch({ control, name: "brandLogoDataUrl" }) as string | undefined;
   const brandColorRaw = useWatch({ control, name: "brandColor" }) as string | undefined;
+  const gradientValueRaw = useWatch({ control, name: "gradient" }) as GradientId | undefined;
 
   const brandUploadRef = React.useRef<HTMLInputElement>(null);
 
@@ -34,6 +37,15 @@ const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
   const neutralSwatchColor = "#FFFFFF";
   const brandColorDisplay = isNeutralBrandColor ? neutralSwatchColor : brandColorValue ?? defaultBrandColor;
   const colorInputValue = brandColorDisplay;
+  const gradientValue = gradientValueRaw ?? defaultGradientId;
+
+  const selectedGradient = React.useMemo(() => {
+    return (
+      gradientOptions.find((option) => option.id === gradientValue) ??
+      gradientOptions.find((option) => option.id === defaultGradientId) ??
+      gradientOptions[0]
+    );
+  }, [gradientValue]);
 
   React.useEffect(() => {
     setCustomHexDraft(brandColorValue ?? "");
@@ -99,6 +111,14 @@ const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
   }, [setValue]);
 
   const brandColorField = register("brandColor");
+  const gradientField = register("gradient");
+
+  const handleGradientPick = React.useCallback(
+    (id: GradientId) => {
+      setValue("gradient", id, { shouldDirty: true, shouldTouch: true, shouldValidate: true });
+    },
+    [setValue]
+  );
 
   return (
     <section className={`${sectionClass} overflow-hidden ${className ?? ""}`}>
@@ -242,6 +262,46 @@ const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
                   isCustomBrandColor && brandColorValue ? "opacity-100" : "opacity-0"
                 }`}
               />
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className={labelClass}>Gradient</div>
+          <input type="hidden" {...gradientField} value={gradientValue} />
+          <div className="mt-3 grid grid-cols-1 gap-3">
+            {gradientOptions.map((option) => {
+              const isActive = option.id === selectedGradient.id;
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => handleGradientPick(option.id)}
+                  className={`flex items-center gap-4 rounded-2xl border p-3 transition ${
+                    isActive ? "shadow-sm" : "hover:border-slate-300"
+                  }`}
+                  style={{
+                    borderColor: isActive ? dashboardAccentColor : "#E2E8F0",
+                    background: isActive ? mixHexColors(dashboardAccentColor, "#FFFFFF", 0.75) : "#FFFFFF",
+                  }}
+                >
+                  <span className={`h-10 w-10 shrink-0 rounded-lg ${option.swatchClass}`} aria-hidden />
+                  <span className="flex min-w-0 flex-col text-left">
+                    <span className="truncate text-sm font-semibold leading-tight text-slate-700">{option.name}</span>
+                    <span
+                      className="text-[11px] font-semibold uppercase tracking-wide"
+                      style={isActive ? { color: dashboardAccentColor } : undefined}
+                    >
+                      {isActive ? "Active" : "Select"}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          <div className="mt-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-inner">
+            <div className={`relative mx-auto h-28 w-full max-w-[220px] overflow-hidden rounded-[32px] ${selectedGradient.backgroundClass}`}>
+              <div className={`absolute inset-0 bg-gradient-to-br ${selectedGradient.highlightClass} opacity-70`} />
+              <div className="absolute inset-6 rounded-[28px] border border-white/60 bg-white/20 backdrop-blur-sm" />
             </div>
           </div>
         </div>

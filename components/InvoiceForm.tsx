@@ -68,13 +68,13 @@ export default function InvoiceForm({
   return (
     <div className="space-y-6">
       <div className="grid gap-5 xl:grid-cols-4 xl:grid-rows-[repeat(6,minmax(0,auto))]">
-        <BrandSection form={form} className="xl:col-start-1 xl:row-start-1 xl:row-span-1" />
-        <InvoiceDetailsSection form={form} className="xl:col-start-1 xl:row-start-2 xl:row-span-1" />
+        <BrandSection form={form} className="xl:col-start-1 xl:row-start-1 xl:row-span-2" />
+        <InvoiceDetailsSection form={form} className="xl:col-start-1 xl:row-start-3 xl:row-span-1" />
         <CompanySection form={form} className="xl:col-start-2 xl:row-start-1 xl:row-span-2" />
         <ClientSection form={form} className="xl:col-start-3 xl:row-start-1 xl:row-span-2" />
-        <OtherInfoSection form={form} className="xl:col-start-4 xl:row-start-1 xl:row-span-2" />
+        <OtherInfoSection form={form} className="xl:col-start-4 xl:row-start-1 xl:row-span-1" />
         <ProjectItemsSection form={form} className="xl:col-start-2 xl:col-span-2 xl:row-start-3 xl:row-span-2" />
-        <PriceSection form={form} className="xl:col-start-4 xl:row-start-3 xl:row-span-2" />
+        <PriceSection form={form} className="xl:col-start-4 xl:row-start-2 xl:row-span-1" />
       </div>
     </div>
   );
