@@ -1,11 +1,9 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { defaultBrandColor, NO_BRAND_COLOR } from "@/lib/colors";
-import { defaultGradientId, gradientOptions } from "@/lib/gradients";
-import type { GradientId } from "@/lib/gradients";
+import { defaultBrandColor } from "@/lib/colors";
+import { defaultGradientId } from "@/lib/gradients";
 import type { Invoice } from "@/lib/types";
 
 import BrandSection from "./invoice-form/BrandSection";
@@ -15,65 +13,17 @@ import InvoiceDetailsSection from "./invoice-form/InvoiceDetailsSection";
 import OtherInfoSection from "./invoice-form/OtherInfoSection";
 import PriceSection from "./invoice-form/PriceSection";
 import ProjectItemsSection from "./invoice-form/ProjectItemsSection";
-import { hexColorRegExp } from "./invoice-form/constants";
+import type { InvoiceFormResolvedValues, InvoiceFormValues } from "./invoice-form/schema";
+import { invoiceFormSchema } from "./invoice-form/schema";
 
-const gradientIdSet = new Set(gradientOptions.map((option) => option.id));
-
-const schema = z.object({
-  brandName: z.string().min(1),
-  brandLogoDataUrl: z.string().optional(),
-  invoiceNumber: z.string().min(1),
-  issuedDate: z.string().min(1),
-  dueDate: z.string().min(1),
-  currency: z.enum(["USD", "EUR", "GBP", "JPY", "CHF", "CNY", "MXN", "BTC"]),
-  currencySymbol: z.string().optional(),
-  brandColor: z
-    .string()
-    .optional()
-    .refine((value) => !value || value === NO_BRAND_COLOR || hexColorRegExp.test(value), { message: "Invalid color" }),
-  from: z.object({
-    name: z.string().min(1),
-    taxNumber: z.string().optional(),
-    address: z.string().optional(),
-    email: z.string().optional(),
-    phone: z.string().optional(),
-    website: z.string().optional(),
-  }),
-  to: z.object({
-    name: z.string().min(1),
-    taxNumber: z.string().optional(),
-    address: z.string().optional(),
-    email: z.string().optional(),
-    phone: z.string().optional(),
-    photoDataUrl: z.string().optional(),
-  }),
-  items: z.array(
-    z.object({
-      id: z.string(),
-      description: z.string().min(1).or(z.literal("")),
-      qty: z.number().min(0),
-      price: z.number().min(0),
-    })
-  ),
-  terms: z.string().optional(),
-  discount: z.number().optional(),
-  tax: z.number().optional(),
-  project: z
-    .object({
-      name: z.string().optional(),
-      code: z.string().optional(),
-      startDate: z.string().optional(),
-      endDate: z.string().optional(),
-      notes: z.string().optional(),
-    })
-    .optional(),
-  gradient: z
-    .string()
-    .optional()
-    .refine((value) => !value || gradientIdSet.has(value as GradientId), { message: "Invalid gradient selection" }),
-});
+// Align loosely typed form values with the stricter persisted Invoice shape.
+const toInvoice = (values: InvoiceFormValues): Invoice => ({
+  ...values,
+  currencySymbol: values.currencySymbol ?? "",
+}) as Invoice;
 
 const cloneInvoice = (invoice: Invoice): Invoice => {
+  // Prefer the native deep-clone to keep behaviour consistent across environments.
   if (typeof structuredClone === "function") {
     return structuredClone(invoice);
   }
@@ -101,26 +51,31 @@ export default function InvoiceForm({
   initial: Invoice;
   onChange: (inv: Invoice) => void;
 }) {
-  const form = useForm<Invoice>({
-    resolver: zodResolver(schema as any),
-    defaultValues: {
-      ...initial,
-      brandColor: initial.brandColor ?? defaultBrandColor,
-      gradient: initial.gradient ?? defaultGradientId,
-      project: initial.project ?? { name: "", code: "", startDate: "", endDate: "", notes: "" },
-    },
+  // Centralize defaults so the form starts from a predictable baseline.
+  const defaultValues: InvoiceFormValues = {
+    ...initial,
+    brandColor: initial.brandColor ?? defaultBrandColor,
+    gradient: initial.gradient ?? defaultGradientId,
+    project: initial.project ?? { name: "", code: "", startDate: "", endDate: "", notes: "" },
+    currencySymbol: initial.currencySymbol ?? "",
+  };
+
+  const form = useForm<InvoiceFormValues, undefined, InvoiceFormResolvedValues>({
+    resolver: zodResolver(invoiceFormSchema),
+    defaultValues,
     mode: "onChange",
   });
 
-  const { watch } = form;
+  const { watch, getValues } = form;
 
   React.useEffect(() => {
-    const subscription = watch((value) => {
-      if (!value) return;
-      onChange(cloneInvoice(value as Invoice));
+    // Subscribe to value changes and emit a safe copy upstream.
+    const subscription = watch(() => {
+      const current = getValues();
+      onChange(cloneInvoice(toInvoice(current)));
     });
     return () => subscription.unsubscribe();
-  }, [watch, onChange]);
+  }, [getValues, watch, onChange]);
 
   return (
     <div className="space-y-6">

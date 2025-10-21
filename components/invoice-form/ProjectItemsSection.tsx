@@ -1,14 +1,16 @@
 import React from "react";
 import { Plus, Trash2 } from "lucide-react";
-import { UseFormReturn, useFieldArray, useWatch } from "react-hook-form";
+import { useFieldArray, useWatch } from "react-hook-form";
 
-import type { CurrencyCode, Invoice } from "@/lib/types";
+import type { CurrencyCode } from "@/lib/types";
 
 import { currencyMetaByCode, inputClass, labelClass, sectionClass } from "./constants";
+import type { InvoiceFormContext } from "./formTypes";
+import type { InvoiceFormValues } from "./schema";
 import { createItemId, sanitizeNumber } from "./utils";
 
 type ProjectItemsSectionProps = {
-  form: Pick<UseFormReturn<Invoice>, "register" | "control">;
+  form: Pick<InvoiceFormContext, "register" | "control">;
   className?: string;
 };
 
@@ -20,7 +22,7 @@ const ProjectItemsSection: React.FC<ProjectItemsSectionProps> = ({ form, classNa
     name: "items",
   });
 
-  const itemsList = useWatch({ control, name: "items" }) as Invoice["items"];
+  const itemsList = useWatch({ control, name: "items" }) as InvoiceFormValues["items"];
   const selectedCurrency = useWatch({ control, name: "currency" }) as CurrencyCode | undefined;
   const currencySymbolValue = useWatch({ control, name: "currencySymbol" }) as string | undefined;
 

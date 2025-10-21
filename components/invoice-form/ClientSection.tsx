@@ -1,13 +1,12 @@
 import React from "react";
 import { X } from "lucide-react";
-import { UseFormReturn, useWatch } from "react-hook-form";
-
-import type { Invoice } from "@/lib/types";
+import { useWatch } from "react-hook-form";
 
 import { inputClass, labelClass, sectionClass, textareaClass } from "./constants";
+import type { InvoiceFormContext } from "./formTypes";
 
 type ClientSectionProps = {
-  form: Pick<UseFormReturn<Invoice>, "register" | "control" | "setValue">;
+  form: Pick<InvoiceFormContext, "register" | "control" | "setValue">;
   className?: string;
 };
 

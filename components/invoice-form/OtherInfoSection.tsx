@@ -1,10 +1,10 @@
 import React from "react";
-import { UseFormReturn, useWatch } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 
 import { defaultGradientId, gradientOptions } from "@/lib/gradients";
 import type { GradientId } from "@/lib/gradients";
 import { mixHexColors } from "@/lib/colors";
-import type { CurrencyCode, Invoice } from "@/lib/types";
+import type { CurrencyCode } from "@/lib/types";
 
 import {
   currencyMeta,
@@ -13,9 +13,10 @@ import {
   labelClass,
   sectionClass,
 } from "./constants";
+import type { InvoiceFormContext } from "./formTypes";
 
 type OtherInfoSectionProps = {
-  form: Pick<UseFormReturn<Invoice>, "register" | "control" | "setValue">;
+  form: Pick<InvoiceFormContext, "register" | "control" | "setValue">;
   className?: string;
 };
 

@@ -1,12 +1,10 @@
 import React from "react";
-import { UseFormReturn } from "react-hook-form";
-
-import type { Invoice } from "@/lib/types";
+import type { InvoiceFormContext } from "./formTypes";
 
 import { inputClass, labelClass, sectionClass, textareaClass } from "./constants";
 
 type CompanySectionProps = {
-  form: Pick<UseFormReturn<Invoice>, "register">;
+  form: Pick<InvoiceFormContext, "register">;
   className?: string;
 };
 

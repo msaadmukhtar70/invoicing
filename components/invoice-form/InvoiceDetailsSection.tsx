@@ -1,13 +1,12 @@
 import React from "react";
-import { UseFormReturn, useWatch } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 
 import PillSelect, { PillOption } from "../PillSelect";
-import type { Invoice } from "@/lib/types";
-
 import { inputClass, labelClass, sectionClass } from "./constants";
+import type { InvoiceFormContext } from "./formTypes";
 
 type InvoiceDetailsSectionProps = {
-  form: Pick<UseFormReturn<Invoice>, "register" | "control" | "setValue">;
+  form: Pick<InvoiceFormContext, "register" | "control" | "setValue">;
   className?: string;
 };
 

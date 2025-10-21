@@ -1,14 +1,14 @@
 import React from "react";
 import { Check, X } from "lucide-react";
-import { UseFormReturn, useWatch } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 
 import { popularBrandColors, defaultBrandColor, NO_BRAND_COLOR } from "@/lib/colors";
-import type { Invoice } from "@/lib/types";
 
 import { hexColorRegExp, labelClass, sectionClass } from "./constants";
+import type { InvoiceFormContext } from "./formTypes";
 
 type BrandSectionProps = {
-  form: Pick<UseFormReturn<Invoice>, "register" | "control" | "setValue">;
+  form: Pick<InvoiceFormContext, "register" | "control" | "setValue">;
   className?: string;
 };
 

@@ -1,14 +1,16 @@
 import React from "react";
-import { UseFormReturn, useWatch } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 
 import { total } from "@/lib/currency";
-import type { CurrencyCode, Invoice } from "@/lib/types";
+import type { CurrencyCode } from "@/lib/types";
 
 import { inputClass, labelClass, sectionClass } from "./constants";
 import { sanitizeNumber } from "./utils";
+import type { InvoiceFormContext } from "./formTypes";
+import type { InvoiceFormValues } from "./schema";
 
 type PriceSectionProps = {
-  form: Pick<UseFormReturn<Invoice>, "register" | "control">;
+  form: Pick<InvoiceFormContext, "register" | "control">;
   className?: string;
 };
 
@@ -17,7 +19,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form, className }) => {
 
   const discountRaw = useWatch({ control, name: "discount" }) as number | undefined;
   const taxRaw = useWatch({ control, name: "tax" }) as number | undefined;
-  const items = useWatch({ control, name: "items" }) as Invoice["items"];
+  const items = useWatch({ control, name: "items" }) as InvoiceFormValues["items"];
   const selectedCurrency = useWatch({ control, name: "currency" }) as CurrencyCode | undefined;
 
   const discountValue = sanitizeNumber(discountRaw);

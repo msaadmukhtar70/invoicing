@@ -4,6 +4,17 @@ import { Bitcoin, DollarSign, Euro, JapaneseYen, PoundSterling, SwissFranc } fro
 
 import type { CurrencyCode } from "@/lib/types";
 
+export const currencyCodes = [
+  "USD",
+  "EUR",
+  "GBP",
+  "JPY",
+  "CHF",
+  "CNY",
+  "MXN",
+  "BTC",
+] as const satisfies readonly CurrencyCode[];
+
 export const sectionClass =
   "rounded-3xl border border-slate-200 bg-white p-6 shadow-sm";
 export const labelClass =
