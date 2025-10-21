@@ -67,13 +67,26 @@ export default function PreviewPage() {
   const currentGradient = resolveGradient(invoice.gradient);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#F6F8FF] via-white to-[#FEF5F0] pb-16">
+    <main className="min-h-screen pb-16">
       <div className="mx-auto max-w-[1360px] px-4 py-6 md:px-6 md:py-10">
-        <div className="mb-6 rounded-[36px] border border-slate-200/70 bg-white shadow-soft">
-          <div className="flex flex-wrap items-center justify-between gap-6 px-6 py-6 md:px-10 md:py-8">
-            <div className="space-y-3">
-              <h1 className="text-2xl font-bold text-slate-800 md:text-3xl">Invoice Preview</h1>
-              <p className="max-w-lg text-sm text-slate-500 md:text-base">
+        <div className="mb-6 overflow-hidden rounded-[36px] border border-slate-200/70 bg-white shadow-soft">
+          <div className="relative px-6 py-6 md:px-10 md:py-8">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#F6F8FF] via-white to-[#FEF5F0]"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-20 right-4 h-52 w-52 rounded-full bg-brix-blue/20 blur-3xl"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -bottom-24 left-12 h-48 w-48 rounded-full bg-orange-200/25 blur-3xl"
+            />
+            <div className="relative flex flex-wrap items-center justify-between gap-6">
+              <div className="space-y-3">
+                <h1 className="text-2xl font-bold text-slate-800 md:text-3xl">Invoice Preview</h1>
+                <p className="max-w-lg text-sm text-slate-500 md:text-base">
                   Switch templates, fine-tune the layout, and share polished PDFs with your clients.
                 </p>
               </div>
