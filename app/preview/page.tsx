@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { ArrowLeft, Download, Loader2 } from "lucide-react";
 import TemplateSwitcher, { TemplateKey } from "@/components/TemplateSwitcher";
 import { InvoiceOne, InvoiceTwo, InvoiceThree, InvoiceFour } from "@/components/templates";
 import { Invoice } from "@/lib/types";
@@ -38,6 +39,11 @@ export default function PreviewPage() {
   const [exporting, setExporting] = React.useState(false);
   const [invoice, setInvoice] = React.useState<Invoice>(sampleInvoice);
 
+  const baseButton =
+    "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition active:scale-[0.99]";
+  const secondaryButton = `${baseButton} border border-slate-200 bg-white/90 text-slate-700 hover:bg-white`;
+  const primaryButton = `${baseButton} border border-brix-blue bg-brix-blue text-white hover:bg-brix-blue/90 disabled:cursor-not-allowed disabled:opacity-70`;
+
   React.useEffect(() => {
     const stored = loadInvoice();
     if (stored) {
@@ -61,20 +67,36 @@ export default function PreviewPage() {
   const currentGradient = resolveGradient(invoice.gradient);
 
   return (
-    <main className="min-h-screen pb-16">
-      <div className="mx-auto max-w-6xl px-4 py-6 md:px-8 md:py-10">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-800 md:text-3xl">Invoice Preview</h1>
-            <p className="text-sm text-slate-500">Switch templates, check the layout and export your PDF.</p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Link className="btn" href="/">
-              Back to editor
-            </Link>
-            <button className="btn-primary" onClick={downloadPdf} disabled={exporting}>
-              {exporting ? "Exporting..." : "Download PDF"}
-            </button>
+    <main className="min-h-screen bg-gradient-to-br from-[#F6F8FF] via-white to-[#FEF5F0] pb-16">
+      <div className="mx-auto max-w-[1360px] px-4 py-6 md:px-6 md:py-10">
+        <div className="mb-6 rounded-[36px] border border-slate-200/70 bg-white shadow-soft">
+          <div className="flex flex-wrap items-center justify-between gap-6 px-6 py-6 md:px-10 md:py-8">
+            <div className="space-y-3">
+              <h1 className="text-2xl font-bold text-slate-800 md:text-3xl">Invoice Preview</h1>
+              <p className="max-w-lg text-sm text-slate-500 md:text-base">
+                  Switch templates, fine-tune the layout, and share polished PDFs with your clients.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <Link className={secondaryButton} href="/">
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to editor
+                </Link>
+                <button className={primaryButton} onClick={downloadPdf} disabled={exporting}>
+                  {exporting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Exporting...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-4 w-4" />
+                      Download PDF
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 

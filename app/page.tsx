@@ -117,29 +117,31 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen pb-16">
+    <main className="min-h-screen bg-gradient-to-br from-[#F6F8FF] via-white to-[#FEF5F0] pb-16">
       <div className="mx-auto w-full max-w-[1360px] px-4 py-6 md:px-6 md:py-10">
-        <div className="mb-8 space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-[32px] border border-slate-200/70 bg-[#F5F7FD] px-6 py-5 shadow-soft md:gap-6">
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brix-blue text-white shadow-brix">
-                <PenSquare className="h-4 w-4" />
-              </span>
-              <h1 className="text-xl font-semibold text-slate-800 md:text-2xl">Edition Panel</h1>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <button className={secondaryButton} onClick={importJson}>
-                Import JSON
-              </button>
-              <button className={secondaryButton} onClick={exportJson}>
-                Export JSON
-              </button>
-              <button className={secondaryButton} onClick={resetInvoice}>
-                Reset
-              </button>
-              <Link className={primaryButton} href="/preview">
-                Open preview
-              </Link>
+        <div className="mb-8">
+          <div className="rounded-[36px] border border-slate-200/70 bg-white shadow-soft">
+            <div className="flex flex-wrap items-center justify-between gap-4 px-4 py-4 md:px-8">
+              <div className="flex flex-1 items-center gap-3 md:gap-4">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brix-blue text-white shadow-brix">
+                  <PenSquare className="h-4 w-4" />
+                </span>
+                <h1 className="text-xl font-semibold text-slate-800 md:text-2xl">Edition Panel</h1>
+              </div>
+              <div className="flex flex-wrap items-center justify-end gap-2 md:gap-3">
+                <button className={secondaryButton} onClick={importJson}>
+                  Import JSON
+                </button>
+                <button className={secondaryButton} onClick={exportJson}>
+                  Export JSON
+                </button>
+                <button className={secondaryButton} onClick={resetInvoice}>
+                  Reset
+                </button>
+                <Link className={primaryButton} href="/preview">
+                  Open preview
+                </Link>
+              </div>
             </div>
           </div>
         </div>
