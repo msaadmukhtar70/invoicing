@@ -58,6 +58,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form, className }) => {
             type="number"
             step="0.01"
             min={0}
+            placeholder="Enter discount (optional)"
             className={`${inputClass} mt-2 rounded-full`}
             {...register("discount", { valueAsNumber: true })}
           />
@@ -71,6 +72,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form, className }) => {
             type="number"
             step="0.01"
             min={0}
+            placeholder="Enter tax amount"
             className={`${inputClass} mt-2 rounded-full`}
             {...register("tax", { valueAsNumber: true })}
           />

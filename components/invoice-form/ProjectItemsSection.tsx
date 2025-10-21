@@ -90,6 +90,7 @@ const ProjectItemsSection: React.FC<ProjectItemsSectionProps> = ({ form, classNa
                         min={0}
                         step={1}
                         className={`${inputClass} rounded-full text-center row-start-1`}
+                        placeholder="1"
                         {...register(`items.${index}.qty` as const, { valueAsNumber: true })}
                       />
                       <div className="row-start-1 flex items-center justify-center gap-2">
@@ -99,6 +100,7 @@ const ProjectItemsSection: React.FC<ProjectItemsSectionProps> = ({ form, classNa
                           min={0}
                           step="0.01"
                           className={`${inputClass} rounded-full`}
+                          placeholder="0.00"
                           {...register(`items.${index}.price` as const, { valueAsNumber: true })}
                         />
                       </div>

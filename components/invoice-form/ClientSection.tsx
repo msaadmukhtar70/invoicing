@@ -48,31 +48,57 @@ const ClientSection: React.FC<ClientSectionProps> = ({ form, className }) => {
           <label className={labelClass} htmlFor="toName">
             Customer
           </label>
-          <input id="toName" className={`${inputClass} mt-2 rounded-full`} {...register("to.name")} />
+          <input
+            id="toName"
+            className={`${inputClass} mt-2 rounded-full`}
+            placeholder="Enter customer or company name"
+            {...register("to.name")}
+          />
         </div>
         <div>
           <label className={labelClass} htmlFor="toAddress">
             Address
           </label>
-          <textarea id="toAddress" rows={3} className={`${textareaClass} mt-2 rounded-3xl`} {...register("to.address")} />
+          <textarea
+            id="toAddress"
+            rows={3}
+            className={`${textareaClass} mt-2 rounded-3xl`}
+            placeholder="Street, city, state, postal code"
+            {...register("to.address")}
+          />
         </div>
         <div>
           <label className={labelClass} htmlFor="toEmail">
             Email
           </label>
-          <input id="toEmail" className={`${inputClass} mt-2 rounded-full`} {...register("to.email")} />
+          <input
+            id="toEmail"
+            className={`${inputClass} mt-2 rounded-full`}
+            placeholder="customer@example.com"
+            {...register("to.email")}
+          />
         </div>
         <div>
           <label className={labelClass} htmlFor="toPhone">
             Phone number
           </label>
-          <input id="toPhone" className={`${inputClass} mt-2 rounded-full`} {...register("to.phone")} />
+          <input
+            id="toPhone"
+            className={`${inputClass} mt-2 rounded-full`}
+            placeholder="+1 555 123 4567"
+            {...register("to.phone")}
+          />
         </div>
         <div>
           <label className={labelClass} htmlFor="toTax">
             Tax number
           </label>
-          <input id="toTax" className={`${inputClass} mt-2 rounded-full`} {...register("to.taxNumber")} />
+          <input
+            id="toTax"
+            className={`${inputClass} mt-2 rounded-full`}
+            placeholder="Customer tax ID"
+            {...register("to.taxNumber")}
+          />
         </div>
         <div>
           <div className={labelClass}>Photo</div>

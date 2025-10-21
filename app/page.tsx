@@ -17,6 +17,43 @@ const ensureBrandColor = (invoice: Invoice) => {
   return typeof invoice.brandColor === "string" ? invoice.brandColor : NO_BRAND_COLOR;
 };
 
+const emptyInvoice: Invoice = {
+  brandName: "",
+  brandLogoDataUrl: "",
+  brandColor: NO_BRAND_COLOR,
+  invoiceNumber: "",
+  issuedDate: "",
+  dueDate: "",
+  currency: "USD",
+  currencySymbol: "$",
+  from: {
+    name: "",
+    taxNumber: "",
+    address: "",
+    email: "",
+    phone: "",
+    website: "",
+  },
+  to: {
+    name: "",
+    taxNumber: "",
+    address: "",
+    email: "",
+    phone: "",
+    photoDataUrl: "",
+  },
+  items: [],
+  terms: "",
+  project: {
+    name: "",
+    code: "",
+    startDate: "",
+    endDate: "",
+    notes: "",
+  },
+  gradient: defaultGradientId,
+};
+
 export default function HomePage() {
   const [invoice, setInvoice] = React.useState<Invoice>(sampleInvoice);
   const [formEpoch, setFormEpoch] = React.useState(0);
@@ -74,8 +111,8 @@ export default function HomePage() {
     anchor.click();
   };
 
-  const resetSample = () => {
-    setInvoice(sampleInvoice);
+  const resetInvoice = () => {
+    setInvoice(emptyInvoice);
     setFormEpoch((prev) => prev + 1);
   };
 
@@ -97,8 +134,8 @@ export default function HomePage() {
               <button className={secondaryButton} onClick={exportJson}>
                 Export JSON
               </button>
-              <button className={secondaryButton} onClick={resetSample}>
-                Reset sample
+              <button className={secondaryButton} onClick={resetInvoice}>
+                Reset
               </button>
               <Link className={primaryButton} href="/preview">
                 Open preview

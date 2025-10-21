@@ -74,6 +74,7 @@ const DateEditor: React.FC<{
           const nextValue = Math.min(31, Math.max(1, Number(event.target.value)));
           onChange(field, "day", nextValue);
         }}
+        placeholder="DD"
         className="w-12 shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm outline-none transition focus:border-brix-blue focus:ring-2 focus:ring-brix-blue/30"
       />
       <input
@@ -82,6 +83,7 @@ const DateEditor: React.FC<{
         max={3000}
         value={value.year}
         onChange={(event) => onChange(field, "year", Number(event.target.value))}
+        placeholder="YYYY"
         className="w-[4.5rem] shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm outline-none transition focus:border-brix-blue focus:ring-2 focus:ring-brix-blue/30"
       />
     </div>
@@ -115,7 +117,12 @@ const InvoiceDetailsSection: React.FC<InvoiceDetailsSectionProps> = ({ form, cla
           <label className={labelClass} htmlFor="invoiceNumber">
             Invoice number
           </label>
-          <input id="invoiceNumber" className={`${inputClass} mt-2 rounded-full`} {...register("invoiceNumber")} />
+          <input
+            id="invoiceNumber"
+            className={`${inputClass} mt-2 rounded-full`}
+            placeholder="e.g. INV-0001"
+            {...register("invoiceNumber")}
+          />
         </div>
         <div className="sm:col-span-2">
           <label className={labelClass} htmlFor="issuedDate">

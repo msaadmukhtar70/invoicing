@@ -31,8 +31,9 @@ const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
 
   const isNeutralBrandColor = brandColorRaw === NO_BRAND_COLOR;
   const isCustomBrandColor = !!brandColorValue && !popularBrandColors.some((color) => color.toUpperCase() === brandColorValue);
-  const brandColorDisplay = brandColorValue ?? defaultBrandColor;
-  const colorInputValue = brandColorValue ?? defaultBrandColor;
+  const neutralSwatchColor = "#FFFFFF";
+  const brandColorDisplay = isNeutralBrandColor ? neutralSwatchColor : brandColorValue ?? defaultBrandColor;
+  const colorInputValue = brandColorDisplay;
 
   React.useEffect(() => {
     setCustomHexDraft(brandColorValue ?? "");
@@ -138,6 +139,7 @@ const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
           <input
             id="brandName"
             className="mt-2 h-14 w-full rounded-2xl border border-slate-200 bg-white px-5 text-center text-xl font-black tracking-tight text-slate-800 outline-none transition focus:border-brix-blue focus:ring-2 focus:ring-brix-blue/30"
+            placeholder="Enter brand name"
             {...register("brandName")}
           />
         </div>
