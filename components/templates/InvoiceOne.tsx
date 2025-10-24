@@ -1,98 +1,169 @@
 "use client";
 import React from "react";
 import { Invoice } from "@/lib/types";
-import { HeaderLogo, MoneyBig, computeTotals, TemplateFrame } from "./TemplateBase";
+import { MoneyBig, computeTotals, TemplateFrame } from "./TemplateBase";
 import { formatMoney } from "@/lib/currency";
+
+const formatDisplayDate = (value?: string) => {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+const LOGO_ACTIVE_DOTS = new Set([0, 1, 3, 4, 5, 7, 8]);
 
 export default function InvoiceOne({ inv }: { inv: Invoice }) {
   const { sub, grand } = computeTotals(inv);
+  const issuedDate = formatDisplayDate(inv.issuedDate);
+  const dueDate = formatDisplayDate(inv.dueDate);
+
   return (
-    <TemplateFrame inv={inv} className="p-6 md:p-8 max-w-[900px] mx-auto">
-      <div className="flex items-start justify-between gap-6">
-        <div className="flex-1 space-y-2">
-          <HeaderLogo inv={inv} />
-          <div className="text-slate-500">{inv.from.name}</div>
-        </div>
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-soft p-4 min-w-[220px] text-right">
-          <div className="text-slate-500 text-sm">Amount due</div>
-          <MoneyBig value={grand} inv={inv} />
-          <div className="text-slate-500 text-sm mt-2">{new Date(inv.dueDate).toLocaleDateString()}</div>
-        </div>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-4 mt-8">
-        <div className="card bg-slate-50/70 p-4">
-          <div className="text-xs text-slate-500">Invoice to:</div>
-          <div className="font-semibold">{inv.to.name}</div>
-          <div className="text-slate-500 text-sm">{inv.to.phone}</div>
-          <div className="text-slate-500 text-sm">{inv.to.address}</div>
-        </div>
-        <div className="card bg-slate-50/70 p-4">
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <div className="text-xs text-slate-500">Invoice number</div>
-              <div className="font-medium">No. {inv.invoiceNumber}</div>
+    <TemplateFrame inv={inv} className="mx-auto max-w-[960px] p-6 md:p-8 lg:p-12">
+      <div className="space-y-10">
+        <div className="flex flex-col gap-6 md:flex-row">
+          <div className="flex-1">
+            <div
+              className="relative flex h-full min-h-[220px] flex-col justify-between overflow-hidden rounded-[30px] p-8 text-white shadow-[0_24px_48px_-22px_var(--brand-color-shadow)]"
+              style={{
+                background: "linear-gradient(140deg, var(--brand-color), var(--brand-color-light))",
+              }}
+            >
+              <div
+                className="pointer-events-none absolute -right-20 -top-16 h-56 w-56 rounded-full opacity-50 blur-0"
+                style={{ background: "var(--brand-color-lighter)" }}
+              />
+              <div
+                className="pointer-events-none absolute -bottom-20 right-12 h-40 w-40 rounded-full opacity-20 blur-0"
+                style={{ background: "var(--brand-color-light)" }}
+              />
+              <div className="relative z-10 flex items-center gap-4">
+                <div className="grid h-14 w-14 grid-cols-3 gap-1 rounded-2xl bg-white/15 p-3 backdrop-blur-sm">
+                  {Array.from({ length: 9 }).map((_, index) => (
+                    <span
+                      key={index}
+                      className={`h-2 w-2 rounded-full ${LOGO_ACTIVE_DOTS.has(index) ? "bg-white/85" : "bg-white/20"}`}
+                    />
+                  ))}
+                </div>
+                <div>
+                  <div className="text-4xl font-extrabold capitalize leading-tight">
+                    {inv.brandName || inv.from.name || "brix"}
+                  </div>
+                  {(inv.from.name || inv.from.taxNumber) && (
+                    <div className="mt-2 text-sm font-medium text-white/70">
+                      {inv.from.name}
+                      {inv.from.taxNumber ? ` / ${inv.from.taxNumber}` : ""}
+                    </div>
+                  )}
+                </div>
+              </div>
+              {inv.invoiceNumber && (
+                <div className="relative z-10 text-xs font-semibold uppercase tracking-[0.54em] text-white/60">
+                  Invoice No. {inv.invoiceNumber}
+                </div>
+              )}
             </div>
-            <div>
-              <div className="text-xs text-slate-500">Issued</div>
-              <div className="font-medium">{new Date(inv.issuedDate).toLocaleDateString()}</div>
+          </div>
+          <div className="flex w-full flex-col gap-4 md:w-72">
+            <div className="rounded-[28px] border border-slate-200 bg-white p-6 text-right shadow-soft">
+              <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+                Amount due
+              </div>
+              <div className="mt-3">
+                <MoneyBig value={grand} inv={inv} />
+              </div>
+              {dueDate && <div className="mt-3 text-sm text-slate-500">{dueDate}</div>}
             </div>
-            <div>
-              <div className="text-xs text-slate-500">Due date</div>
-              <div className="font-medium">{new Date(inv.dueDate).toLocaleDateString()}</div>
-            </div>
-            <div>
-              <div className="text-xs text-slate-500">Currency</div>
-              <div className="font-medium">{inv.currency}</div>
+            <div className="rounded-[28px] border border-slate-200 bg-slate-50/60 p-6 text-sm text-slate-600 shadow-soft">
+              <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+                Invoice to
+              </div>
+              <div className="mt-3 font-semibold text-slate-800">{inv.to.name}</div>
+              {inv.to.phone && <div className="text-slate-500">{inv.to.phone}</div>}
+              {inv.to.address && <div className="text-slate-500">{inv.to.address}</div>}
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50">
-            <tr className="text-slate-600">
-              <th className="p-3 text-left">Description</th>
-              <th className="p-3 text-right">Qty</th>
-              <th className="p-3 text-right">Price</th>
-              <th className="p-3 text-right">Total</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 bg-white">
-            {inv.items.map((it) => (
-              <tr key={it.id}>
-                <td className="p-3">{it.description}</td>
-                <td className="p-3 text-right">{it.qty}</td>
-                <td className="p-3 text-right">{formatMoney(it.price, inv.currency, inv.currencySymbol)}</td>
-                <td className="p-3 text-right font-medium">{formatMoney(it.qty * it.price, inv.currency, inv.currencySymbol)}</td>
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+            Invoice details
+          </div>
+          <div className="mt-4 grid gap-6 rounded-[28px] border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-soft md:grid-cols-3">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">Invoice number</div>
+              <div className="mt-1 text-base font-semibold text-slate-800">No.: {inv.invoiceNumber || "--"}</div>
+            </div>
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">Issued</div>
+              <div className="mt-1 text-base font-semibold text-slate-800">{issuedDate || "--"}</div>
+            </div>
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">Due date</div>
+              <div className="mt-1 text-base font-semibold text-slate-800">{dueDate || "--"}</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-soft">
+          <table className="w-full text-sm text-slate-600">
+            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-400">
+              <tr>
+                <th className="py-4 pl-6 pr-4 text-left font-semibold text-slate-500">Description</th>
+                <th className="px-4 py-4 text-right font-semibold text-slate-500">Qty</th>
+                <th className="px-4 py-4 text-right font-semibold text-slate-500">Price</th>
+                <th className="py-4 pl-4 pr-6 text-right font-semibold text-slate-500">Total</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex flex-col md:flex-row md:items-end gap-4 mt-6">
-        <div className="flex-1 text-sm text-slate-500">
-          <div className="font-semibold text-slate-800 mb-1">Terms & Conditions:</div>
-          <p>{inv.terms}</p>
+            </thead>
+            <tbody className="bg-white">
+              {inv.items.map((it, index) => (
+                <tr
+                  key={it.id}
+                  className={`text-slate-600 ${index % 2 === 0 ? "bg-white" : "bg-slate-50/60"}`}
+                >
+                  <td className="py-4 pl-6 pr-4 text-base text-slate-700">{it.description}</td>
+                  <td className="px-4 py-4 text-right">{it.qty}</td>
+                  <td className="px-4 py-4 text-right">
+                    {formatMoney(it.price, inv.currency, inv.currencySymbol)}
+                  </td>
+                  <td className="py-4 pl-4 pr-6 text-right font-semibold text-slate-800">
+                    {formatMoney(it.qty * it.price, inv.currency, inv.currencySymbol)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <div className="rounded-2xl bg-white border border-slate-200 p-4 w-full md:w-80">
-          <div className="flex justify-between py-2">
-            <span className="text-slate-500">Subtotal</span>
-            <span className="font-medium">{formatMoney(sub, inv.currency, inv.currencySymbol)}</span>
+
+        <div className="flex flex-col gap-6 md:flex-row md:items-end">
+          <div className="flex-1 rounded-[28px] border border-slate-200 bg-slate-50/80 p-6 text-sm text-slate-600 shadow-soft">
+            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Terms & Conditions</div>
+            <p className="mt-3 leading-relaxed">{inv.terms}</p>
           </div>
-          <div className="flex justify-between py-2">
-            <span className="text-slate-500">Discount</span>
-            <span className="font-medium">{formatMoney(inv.discount || 0, inv.currency, inv.currencySymbol)}</span>
-          </div>
-          <div className="flex justify-between py-2">
-            <span className="text-slate-500">TAX</span>
-            <span className="font-medium">{formatMoney(inv.tax || 0, inv.currency, inv.currencySymbol)}</span>
-          </div>
-          <div className="border-t mt-2 pt-3 flex justify-between items-center">
-            <div className="text-sm text-slate-500">Total amount:</div>
-            <MoneyBig value={grand} inv={inv} />
+          <div className="rounded-[28px] border border-slate-200 bg-white p-6 text-right shadow-soft md:w-72">
+            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Total amount</div>
+            <div className="mt-4">
+              <MoneyBig value={grand} inv={inv} />
+            </div>
+            <div className="mt-6 space-y-2 text-sm text-slate-500">
+              <div className="flex justify-between text-slate-400">
+                <span>Subtotal</span>
+                <span>{formatMoney(sub, inv.currency, inv.currencySymbol)}</span>
+              </div>
+              <div className="flex justify-between text-slate-400">
+                <span>Discount</span>
+                <span>{formatMoney(inv.discount || 0, inv.currency, inv.currencySymbol)}</span>
+              </div>
+              <div className="flex justify-between text-slate-400">
+                <span>Tax</span>
+                <span>{formatMoney(inv.tax || 0, inv.currency, inv.currencySymbol)}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -2,7 +2,6 @@
 import React from "react";
 import { Invoice } from "@/lib/types";
 import { formatMoney, total } from "@/lib/currency";
-import { resolveGradient } from "@/lib/gradients";
 import { defaultBrandColor, mixHexColors, hexToRgba, NO_BRAND_COLOR } from "@/lib/colors";
 
 const HEX_WHITE = "#FFFFFF";
@@ -77,11 +76,10 @@ export function TemplateFrame({
   children: React.ReactNode;
 }) {
   const palette = React.useMemo(() => buildBrandPalette(inv.brandColor), [inv.brandColor]);
-  const gradient = resolveGradient(inv.gradient);
 
   return (
     <div
-      className={`relative overflow-hidden rounded-[36px] p-1 ${gradient.backgroundClass}`}
+      className={`relative rounded-[34px] border border-slate-200 bg-white shadow-soft ${className ?? ""}`}
       style={
         {
           "--brand-color": palette.base,
@@ -91,20 +89,7 @@ export function TemplateFrame({
         } as React.CSSProperties
       }
     >
-      <div className="relative rounded-[34px] border border-slate-200 bg-white shadow-soft">
-        <div
-          className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${gradient.highlightClass} opacity-30`}
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-30"
-          aria-hidden
-          style={{
-            background: `radial-gradient(120% 120% at 0% 0%, ${palette.lighter}40, transparent)`,
-          }}
-        />
-        <div className={`relative z-10 rounded-[34px] bg-white/95 backdrop-blur-sm ${className ?? ""}`}>{children}</div>
-      </div>
+      {children}
     </div>
   );
 }

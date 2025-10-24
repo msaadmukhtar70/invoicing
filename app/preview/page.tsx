@@ -9,7 +9,7 @@ import { loadInvoice } from "@/lib/storage";
 import { sampleInvoice } from "@/lib/sampleData";
 import { exportNodeToPdf } from "@/lib/pdf";
 import { defaultBrandColor, NO_BRAND_COLOR } from "@/lib/colors";
-import { resolveGradient, defaultGradientId } from "@/lib/gradients";
+import { defaultGradientId } from "@/lib/gradients";
 
 function TemplateView({ invoice, template }: { invoice: Invoice; template: TemplateKey }) {
   switch (template) {
@@ -64,8 +64,6 @@ export default function PreviewPage() {
     }
   };
 
-  const currentGradient = resolveGradient(invoice.gradient);
-
   return (
     <main className="min-h-screen pb-16">
       <div className="mx-auto max-w-[1360px] px-4 py-6 md:px-6 md:py-10">
@@ -117,15 +115,8 @@ export default function PreviewPage() {
           <aside className="space-y-4">
             <TemplateSwitcher value={template} onChange={setTemplate} />
           </aside>
-          <section className="card p-4 md:p-6">
-            <div
-              id="invoice-preview"
-              className={`overflow-auto rounded-3xl p-4 transition-colors md:p-6 ${currentGradient.backgroundClass}`}
-            >
-              <div className="rounded-[32px] bg-white p-4 shadow-soft md:p-6">
-                <TemplateView template={template} invoice={invoice} />
-              </div>
-            </div>
+          <section id="invoice-preview" className="overflow-auto p-4 md:p-6">
+            <TemplateView template={template} invoice={invoice} />
           </section>
         </div>
       </div>
