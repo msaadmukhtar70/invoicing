@@ -15,12 +15,20 @@ const formatDisplayDate = (value?: string) => {
   });
 };
 
-const LOGO_ACTIVE_DOTS = new Set([0, 1, 3, 4, 5, 7, 8]);
+const LOGO_ACTIVE_DOTS = new Set([0, 1, 3, 4, 5, 6, 7]);
 
 export default function InvoiceOne({ inv }: { inv: Invoice }) {
   const { sub, grand } = computeTotals(inv);
   const issuedDate = formatDisplayDate(inv.issuedDate);
   const dueDate = formatDisplayDate(inv.dueDate);
+  const brandName = inv.brandName?.trim();
+  const hasBrandName = Boolean(brandName);
+  const brandTitle = hasBrandName ? brandName! : "";
+  const agencyName = inv.from.name?.trim() || "";
+  const secondaryId = inv.from.taxNumber?.trim() || inv.from.registrationId?.trim() || "";
+  const brandLogoUrl = inv.brandLogoDataUrl?.trim();
+  const showAgencyLine = Boolean(agencyName || secondaryId);
+  const brandLogoAlt = brandTitle || agencyName ? `${brandTitle || agencyName} logo` : "Brand logo";
 
   return (
     <TemplateFrame inv={inv} className="mx-auto max-w-[960px] p-6 md:p-8 lg:p-12">
@@ -28,39 +36,52 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
         <div className="flex flex-col gap-6 md:flex-row">
           <div className="flex-1">
             <div
-              className="relative flex h-full min-h-[220px] flex-col justify-between overflow-hidden rounded-[30px] p-8 text-white shadow-[0_24px_48px_-22px_var(--brand-color-shadow)]"
+              className="relative flex h-full min-h-[220px] flex-col justify-between overflow-hidden rounded-[32px] bg-[var(--brand-color)] p-9 text-white shadow-[0_28px_52px_-24px_var(--brand-color-shadow)]"
               style={{
                 background: "linear-gradient(140deg, var(--brand-color), var(--brand-color-light))",
               }}
             >
-              <div
-                className="pointer-events-none absolute -right-20 -top-16 h-56 w-56 rounded-full opacity-50 blur-0"
-                style={{ background: "var(--brand-color-lighter)" }}
-              />
-              <div
-                className="pointer-events-none absolute -bottom-20 right-12 h-40 w-40 rounded-full opacity-20 blur-0"
-                style={{ background: "var(--brand-color-light)" }}
-              />
-              <div className="relative z-10 flex items-center gap-4">
-                <div className="grid h-14 w-14 grid-cols-3 gap-1 rounded-2xl bg-white/15 p-3 backdrop-blur-sm">
-                  {Array.from({ length: 9 }).map((_, index) => (
-                    <span
-                      key={index}
-                      className={`h-2 w-2 rounded-full ${LOGO_ACTIVE_DOTS.has(index) ? "bg-white/85" : "bg-white/20"}`}
-                    />
-                  ))}
-                </div>
-                <div>
-                  <div className="text-4xl font-extrabold capitalize leading-tight">
-                    {inv.brandName || inv.from.name || "brix"}
+              <div className="pointer-events-none absolute inset-0">
+                <div
+                  className="absolute -left-20 bottom-[-70px] h-52 w-52 rounded-full opacity-40"
+                  style={{ background: "var(--brand-color-light)" }}
+                />
+                <div
+                  className="absolute -bottom-36 right-[-80px] h-72 w-72 rounded-full opacity-25"
+                  style={{ background: "var(--brand-color-lighter)" }}
+                />
+                <div
+                  className="absolute -top-16 right-[-24px] h-44 w-44 rounded-full opacity-30"
+                  style={{ background: "var(--brand-color-light)" }}
+                />
+              </div>
+              <div className="relative z-10 space-y-4">
+                <div className="flex items-center gap-5">
+                  <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl bg-transparent p-0">
+                    {brandLogoUrl ? (
+                      <img src={brandLogoUrl} alt={brandLogoAlt} className="h-full w-full object-contain" />
+                    ) : (
+                      <div className="grid h-full w-full grid-cols-3 gap-3 rounded-3xl bg-white/10 p-2 backdrop-blur-sm">
+                        {Array.from({ length: 9 }).map((_, index) => (
+                          <span
+                            key={index}
+                            className={`h-4 w-4 rounded-full ${LOGO_ACTIVE_DOTS.has(index) ? "bg-white" : "bg-white/0"}`}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  {(inv.from.name || inv.from.taxNumber) && (
-                    <div className="mt-2 text-sm font-medium text-white/70">
-                      {inv.from.name}
-                      {inv.from.taxNumber ? ` / ${inv.from.taxNumber}` : ""}
-                    </div>
+                  {hasBrandName && (
+                    <div className="text-[38px] font-extrabold leading-none tracking-tight text-white">{brandTitle}</div>
                   )}
                 </div>
+                {showAgencyLine && (
+                  <div className="text-sm font-semibold text-white/80">
+                    {agencyName && <span className="font-semibold text-white">{agencyName}</span>}
+                    {agencyName && secondaryId && <span className="mx-2 text-white/60">/</span>}
+                    {secondaryId && <span className="font-medium text-white/70">{secondaryId}</span>}
+                  </div>
+                )}
               </div>
               {inv.invoiceNumber && (
                 <div className="relative z-10 text-xs font-semibold uppercase tracking-[0.54em] text-white/60">
