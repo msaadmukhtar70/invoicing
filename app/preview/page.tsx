@@ -2,14 +2,16 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowLeft, Download, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import TemplateSwitcher, { TemplateKey } from "@/components/TemplateSwitcher";
 import { InvoiceOne, InvoiceTwo, InvoiceThree, InvoiceFour, InvoiceFive } from "@/components/templates";
 import { Invoice } from "@/lib/types";
-import { loadInvoice } from "@/lib/storage";
-import { createEmptyInvoice } from "@/lib/sampleData";
+import { loadInvoice, markInvoiceNeedsValidation } from "@/lib/storage";
 import { exportNodeToPdf } from "@/lib/pdf";
 import { defaultBrandColor, NO_BRAND_COLOR } from "@/lib/colors";
 import { defaultGradientId } from "@/lib/gradients";
+import type { GradientId } from "@/lib/gradients";
+import { invoiceFormSchema } from "@/components/invoice-form/schema";
 
 function TemplateView({ invoice, template }: { invoice: Invoice; template: TemplateKey }) {
   switch (template) {
@@ -37,9 +39,10 @@ const ensureBrandColor = (invoice: Invoice) => {
 };
 
 export default function PreviewPage() {
+  const router = useRouter();
   const [template, setTemplate] = React.useState<TemplateKey>("1");
   const [exporting, setExporting] = React.useState(false);
-  const [invoice, setInvoice] = React.useState<Invoice>(() => createEmptyInvoice());
+  const [invoice, setInvoice] = React.useState<Invoice | null>(null);
 
   const baseButton =
     "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition active:scale-[0.99]";
@@ -48,16 +51,30 @@ export default function PreviewPage() {
 
   React.useEffect(() => {
     const stored = loadInvoice();
-    if (stored) {
-      setInvoice({
-        ...stored,
-        brandColor: ensureBrandColor(stored),
-        gradient: stored.gradient ?? defaultGradientId,
-      });
+    if (!stored) {
+      markInvoiceNeedsValidation();
+      router.replace("/");
+      return;
     }
-  }, []);
+
+    const parsed = invoiceFormSchema.safeParse(stored);
+    if (!parsed.success) {
+      markInvoiceNeedsValidation();
+      router.replace("/");
+      return;
+    }
+
+    const normalizedGradient = (stored.gradient ?? defaultGradientId) as GradientId;
+    const invoicePayload: Invoice = {
+      ...stored,
+      brandColor: ensureBrandColor(stored),
+      gradient: normalizedGradient,
+    };
+    setInvoice(invoicePayload);
+  }, [router]);
 
   const downloadPdf = async () => {
+    if (!invoice) return;
     setExporting(true);
     try {
       await exportNodeToPdf("invoice-preview", "invoice.pdf");
@@ -65,6 +82,19 @@ export default function PreviewPage() {
       setExporting(false);
     }
   };
+
+  if (!invoice) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-[#F6F8FF] via-white to-[#FEF5F0] pb-16">
+        <div className="mx-auto flex min-h-[60vh] max-w-[1360px] items-center justify-center px-4 py-6 md:px-6 md:py-10">
+          <div className="flex items-center gap-3 rounded-3xl border border-slate-200 bg-white/90 px-6 py-4 text-sm font-semibold text-slate-600 shadow-soft">
+            <Loader2 className="h-4 w-4 animate-spin text-brix-blue" />
+            Preparing preview...
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen pb-16">
@@ -117,7 +147,7 @@ export default function PreviewPage() {
           <aside className="space-y-4">
             <TemplateSwitcher value={template} onChange={setTemplate} />
           </aside>
-          <section className="overflow-auto p-4 md:p-6 flex justify-start lg:justify-center">
+          <section className="flex justify-start overflow-x-auto overflow-y-visible p-4 md:p-6 lg:justify-center lg:overflow-visible">
             <div id="invoice-preview" data-force-desktop className="invoice-preview-surface shrink-0">
               <TemplateView template={template} invoice={invoice} />
             </div>

@@ -4,8 +4,8 @@ import { PenSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 import InvoiceForm, { InvoiceFormHandle } from "@/components/InvoiceForm";
 import { Invoice } from "@/lib/types";
-import { createEmptyInvoice } from "@/lib/sampleData";
-import { loadInvoice, saveInvoice } from "@/lib/storage";
+import { createEmptyInvoice, sampleInvoice } from "@/lib/sampleData";
+import { consumeInvoiceValidationFlag, loadInvoice, saveInvoice } from "@/lib/storage";
 import { defaultGradientId } from "@/lib/gradients";
 import { defaultBrandColor, NO_BRAND_COLOR } from "@/lib/colors";
 
@@ -18,7 +18,7 @@ const ensureBrandColor = (invoice: Invoice) => {
 };
 
 export default function HomePage() {
-  const [invoice, setInvoice] = React.useState<Invoice>(() => createEmptyInvoice());
+  const [invoice, setInvoice] = React.useState<Invoice>(() => sampleInvoice);
   const [formEpoch, setFormEpoch] = React.useState(0);
   const invoiceFormRef = React.useRef<InvoiceFormHandle>(null);
   const router = useRouter();
@@ -81,6 +81,13 @@ export default function HomePage() {
     setFormEpoch((prev) => prev + 1);
   };
 
+  React.useEffect(() => {
+    if (consumeInvoiceValidationFlag()) {
+      setTimeout(() => {
+        invoiceFormRef.current?.validate();
+      }, 0);
+    }
+  }, []);
   const handleOpenPreview = React.useCallback(async () => {
     const isValid = await invoiceFormRef.current?.validate();
     if (isValid) {
