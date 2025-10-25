@@ -1,7 +1,6 @@
 import { Invoice } from "./types";
 import { defaultGradientId } from "./gradients";
-import { defaultBrandColor } from "./colors";
-import { currencySymbols } from "./currency";
+import { defaultBrandColor, NO_BRAND_COLOR } from "./colors";
 
 export const sampleInvoice: Invoice = {
   brandName: "brix",
@@ -46,3 +45,40 @@ export const sampleInvoice: Invoice = {
   },
   gradient: defaultGradientId
 };
+
+export const createEmptyInvoice = (): Invoice => ({
+  brandName: "",
+  brandLogoDataUrl: "",
+  brandColor: NO_BRAND_COLOR,
+  invoiceNumber: "",
+  issuedDate: "",
+  dueDate: "",
+  currency: "USD",
+  currencySymbol: "",
+  from: {
+    name: "",
+    taxNumber: "",
+    address: "",
+    email: "",
+    phone: "",
+    website: ""
+  },
+  to: {
+    name: "",
+    taxNumber: "",
+    address: "",
+    email: "",
+    phone: "",
+    photoDataUrl: ""
+  },
+  items: [],
+  terms: "",
+  project: {
+    name: "",
+    code: "",
+    startDate: "",
+    endDate: "",
+    notes: ""
+  },
+  gradient: defaultGradientId
+});

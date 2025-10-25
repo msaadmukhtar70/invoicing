@@ -35,6 +35,7 @@ const buildBrandPalette = (color?: string) => {
 
 export function HeaderLogo({ inv }: { inv: Invoice }) {
   const palette = React.useMemo(() => buildBrandPalette(inv.brandColor), [inv.brandColor]);
+  const displayName = React.useMemo(() => inv.brandName?.trim() ?? "", [inv.brandName]);
   return (
     <div className="flex items-center gap-3">
       <div
@@ -44,7 +45,7 @@ export function HeaderLogo({ inv }: { inv: Invoice }) {
           boxShadow: `0 12px 28px ${palette.shadow}`,
         }}
       >
-        {inv.brandName || "brix"}
+        {displayName}
       </div>
       {inv.from.taxNumber && <div className="text-slate-500 text-sm">{inv.from.taxNumber}</div>}
     </div>

@@ -4,7 +4,7 @@ import { PenSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 import InvoiceForm, { InvoiceFormHandle } from "@/components/InvoiceForm";
 import { Invoice } from "@/lib/types";
-import { sampleInvoice } from "@/lib/sampleData";
+import { createEmptyInvoice } from "@/lib/sampleData";
 import { loadInvoice, saveInvoice } from "@/lib/storage";
 import { defaultGradientId } from "@/lib/gradients";
 import { defaultBrandColor, NO_BRAND_COLOR } from "@/lib/colors";
@@ -17,45 +17,8 @@ const ensureBrandColor = (invoice: Invoice) => {
   return typeof invoice.brandColor === "string" ? invoice.brandColor : NO_BRAND_COLOR;
 };
 
-const emptyInvoice: Invoice = {
-  brandName: "",
-  brandLogoDataUrl: "",
-  brandColor: NO_BRAND_COLOR,
-  invoiceNumber: "",
-  issuedDate: "",
-  dueDate: "",
-  currency: "USD",
-  currencySymbol: "$",
-  from: {
-    name: "",
-    taxNumber: "",
-    address: "",
-    email: "",
-    phone: "",
-    website: "",
-  },
-  to: {
-    name: "",
-    taxNumber: "",
-    address: "",
-    email: "",
-    phone: "",
-    photoDataUrl: "",
-  },
-  items: [],
-  terms: "",
-  project: {
-    name: "",
-    code: "",
-    startDate: "",
-    endDate: "",
-    notes: "",
-  },
-  gradient: defaultGradientId,
-};
-
 export default function HomePage() {
-  const [invoice, setInvoice] = React.useState<Invoice>(sampleInvoice);
+  const [invoice, setInvoice] = React.useState<Invoice>(() => createEmptyInvoice());
   const [formEpoch, setFormEpoch] = React.useState(0);
   const invoiceFormRef = React.useRef<InvoiceFormHandle>(null);
   const router = useRouter();
@@ -114,7 +77,7 @@ export default function HomePage() {
   };
 
   const resetInvoice = () => {
-    setInvoice(emptyInvoice);
+    setInvoice(createEmptyInvoice());
     setFormEpoch((prev) => prev + 1);
   };
 

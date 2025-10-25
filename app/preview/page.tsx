@@ -6,7 +6,7 @@ import TemplateSwitcher, { TemplateKey } from "@/components/TemplateSwitcher";
 import { InvoiceOne, InvoiceTwo, InvoiceThree, InvoiceFour, InvoiceFive } from "@/components/templates";
 import { Invoice } from "@/lib/types";
 import { loadInvoice } from "@/lib/storage";
-import { sampleInvoice } from "@/lib/sampleData";
+import { createEmptyInvoice } from "@/lib/sampleData";
 import { exportNodeToPdf } from "@/lib/pdf";
 import { defaultBrandColor, NO_BRAND_COLOR } from "@/lib/colors";
 import { defaultGradientId } from "@/lib/gradients";
@@ -39,7 +39,7 @@ const ensureBrandColor = (invoice: Invoice) => {
 export default function PreviewPage() {
   const [template, setTemplate] = React.useState<TemplateKey>("1");
   const [exporting, setExporting] = React.useState(false);
-  const [invoice, setInvoice] = React.useState<Invoice>(sampleInvoice);
+  const [invoice, setInvoice] = React.useState<Invoice>(() => createEmptyInvoice());
 
   const baseButton =
     "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition active:scale-[0.99]";

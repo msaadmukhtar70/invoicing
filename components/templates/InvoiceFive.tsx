@@ -25,6 +25,7 @@ export default function InvoiceFive({ inv }: { inv: Invoice }) {
   const tax = inv.tax ?? 0;
   const hasDiscount = discount > 0;
   const hasTax = tax > 0;
+  const notes = inv.terms ?? "";
 
   return (
     <TemplateFrame inv={inv} className="mx-auto max-w-[860px] space-y-8 px-8 py-10">
@@ -96,7 +97,7 @@ export default function InvoiceFive({ inv }: { inv: Invoice }) {
       <section className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 p-6 text-sm text-slate-600 md:max-w-[55%]">
           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Notes</div>
-          <p className="mt-3 leading-relaxed">{inv.terms || "Thank you for your business."}</p>
+          <p className="mt-3 leading-relaxed">{notes}</p>
         </div>
         <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Summary</div>
@@ -130,4 +131,3 @@ export default function InvoiceFive({ inv }: { inv: Invoice }) {
     </TemplateFrame>
   );
 }
-
