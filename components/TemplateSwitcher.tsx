@@ -1,13 +1,14 @@
 "use client";
 import React from "react";
 
-export type TemplateKey = "1" | "2" | "3" | "4";
+export type TemplateKey = "1" | "2" | "3" | "4" | "5";
 
 const templates = [
   { id: "1", name: "Minimal Card", subtitle: "Style #1" },
   { id: "2", name: "Bright Banner", subtitle: "Style #2" },
   { id: "3", name: "Classic Split", subtitle: "Style #3" },
   { id: "4", name: "Bold Header", subtitle: "Style #4" },
+  { id: "5", name: "Professional Clean", subtitle: "Style #5" },
 ] as const;
 
 export default function TemplateSwitcher({

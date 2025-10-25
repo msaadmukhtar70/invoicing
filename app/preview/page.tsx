@@ -3,7 +3,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowLeft, Download, Loader2 } from "lucide-react";
 import TemplateSwitcher, { TemplateKey } from "@/components/TemplateSwitcher";
-import { InvoiceOne, InvoiceTwo, InvoiceThree, InvoiceFour } from "@/components/templates";
+import { InvoiceOne, InvoiceTwo, InvoiceThree, InvoiceFour, InvoiceFive } from "@/components/templates";
 import { Invoice } from "@/lib/types";
 import { loadInvoice } from "@/lib/storage";
 import { sampleInvoice } from "@/lib/sampleData";
@@ -21,6 +21,8 @@ function TemplateView({ invoice, template }: { invoice: Invoice; template: Templ
       return <InvoiceThree inv={invoice} />;
     case "4":
       return <InvoiceFour inv={invoice} />;
+    case "5":
+      return <InvoiceFive inv={invoice} />;
     default:
       return <InvoiceOne inv={invoice} />;
   }

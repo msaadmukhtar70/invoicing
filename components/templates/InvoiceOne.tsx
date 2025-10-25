@@ -137,7 +137,7 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-soft">
+        <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white">
           <table className="w-full text-sm text-slate-600">
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-400">
               <tr>
