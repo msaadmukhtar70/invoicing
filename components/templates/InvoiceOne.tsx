@@ -137,32 +137,46 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white">
-          <table className="w-full text-sm text-slate-600">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-400">
-              <tr>
-                <th className="py-4 pl-6 pr-4 text-left font-semibold text-slate-500">Description</th>
-                <th className="px-4 py-4 text-right font-semibold text-slate-500">Qty</th>
-                <th className="px-4 py-4 text-right font-semibold text-slate-500">Price</th>
-                <th className="py-4 pl-4 pr-6 text-right font-semibold text-slate-500">Total</th>
+        <div className="overflow-hidden rounded-[28px]">
+          <table className="w-full border-separate border-spacing-0 text-sm text-[#5c638d]">
+            <thead>
+              <tr className="text-xs uppercase tracking-[0.32em] text-[#9aa3d7]">
+                <th className="px-8 pb-5 text-left font-semibold">Description</th>
+                <th className="px-8 pb-5 text-center font-semibold">Qty</th>
+                <th className="px-8 pb-5 text-right font-semibold">Price</th>
+                <th className="px-8 pb-5 text-right font-semibold">Total</th>
               </tr>
             </thead>
-            <tbody className="bg-white">
-              {inv.items.map((it, index) => (
-                <tr
-                  key={it.id}
-                  className={`text-slate-600 ${index % 2 === 0 ? "bg-white" : "bg-slate-50/60"}`}
-                >
-                  <td className="py-4 pl-6 pr-4 text-base text-slate-700">{it.description}</td>
-                  <td className="px-4 py-4 text-right">{it.qty}</td>
-                  <td className="px-4 py-4 text-right">
-                    {formatMoney(it.price, inv.currency, inv.currencySymbol)}
-                  </td>
-                  <td className="py-4 pl-4 pr-6 text-right font-semibold text-slate-800">
-                    {formatMoney(it.qty * it.price, inv.currency, inv.currencySymbol)}
-                  </td>
-                </tr>
-              ))}
+            <tbody className="bg-[#f5f8ff]">
+              {inv.items.map((it, index) => {
+                const isFirst = index === 0;
+                const isLast = index === inv.items.length - 1;
+                const cellDividerClass = isLast ? "" : "border-b border-[#e1e6ff]";
+                return (
+                  <tr key={it.id}>
+                    <td
+                      className={`px-8 py-5 text-base font-semibold text-[#485083] ${
+                        isFirst ? "rounded-tl-[28px]" : ""
+                      } ${isLast ? "rounded-bl-[28px]" : ""} ${cellDividerClass}`}
+                    >
+                      {it.description}
+                    </td>
+                    <td className={`px-8 py-5 text-center text-sm font-medium text-[#6d75a6] ${cellDividerClass}`}>
+                      {it.qty}
+                    </td>
+                    <td className={`px-8 py-5 text-right text-sm font-medium text-[#6d75a6] ${cellDividerClass}`}>
+                      {formatMoney(it.price, inv.currency, inv.currencySymbol)}
+                    </td>
+                    <td
+                      className={`px-8 py-5 text-right text-base font-semibold text-[#1f2857] ${
+                        isFirst ? "rounded-tr-[28px]" : ""
+                      } ${isLast ? "rounded-br-[28px]" : ""} ${cellDividerClass}`}
+                    >
+                      {formatMoney(it.qty * it.price, inv.currency, inv.currencySymbol)}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
