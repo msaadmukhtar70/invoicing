@@ -5,6 +5,7 @@ export type CurrencyCode = "USD" | "EUR" | "GBP" | "JPY" | "CHF" | "CNY" | "MXN"
 export interface CompanyInfo {
   name: string;
   taxNumber?: string;
+  registrationId?: string;
   address?: string;
   email?: string;
   phone?: string;
