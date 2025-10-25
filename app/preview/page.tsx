@@ -117,8 +117,10 @@ export default function PreviewPage() {
           <aside className="space-y-4">
             <TemplateSwitcher value={template} onChange={setTemplate} />
           </aside>
-          <section id="invoice-preview" className="overflow-auto p-4 md:p-6">
-            <TemplateView template={template} invoice={invoice} />
+          <section className="overflow-auto p-4 md:p-6 flex justify-start lg:justify-center">
+            <div id="invoice-preview" data-force-desktop className="invoice-preview-surface shrink-0">
+              <TemplateView template={template} invoice={invoice} />
+            </div>
           </section>
         </div>
       </div>
