@@ -142,9 +142,9 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
             <thead>
               <tr className="text-xs uppercase tracking-[0.32em] text-[#9aa3d7]">
                 <th className="px-8 pb-5 text-left font-semibold">Description</th>
-                <th className="px-8 pb-5 text-center font-semibold">Qty</th>
-                <th className="px-8 pb-5 text-right font-semibold">Price</th>
-                <th className="px-8 pb-5 text-right font-semibold">Total</th>
+                <th className="px-4 pb-5 text-center font-semibold">Qty</th>
+                <th className="px-4 pb-5 text-right font-semibold">Price</th>
+                <th className="px-6 pb-5 text-right font-semibold">Total</th>
               </tr>
             </thead>
             <tbody className="bg-[#f5f8ff]">
@@ -155,20 +155,20 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
                 return (
                   <tr key={it.id}>
                     <td
-                      className={`px-8 py-5 text-base font-semibold text-[#485083] ${
+                    className={`px-8 py-5 text-base font-semibold text-[#485083] ${
                         isFirst ? "rounded-tl-[28px]" : ""
                       } ${isLast ? "rounded-bl-[28px]" : ""} ${cellDividerClass}`}
                     >
                       {it.description}
                     </td>
-                    <td className={`px-8 py-5 text-center text-sm font-medium text-[#6d75a6] ${cellDividerClass}`}>
+                    <td className={`px-4 py-5 text-center text-sm font-medium text-[#6d75a6] ${cellDividerClass}`}>
                       {it.qty}
                     </td>
-                    <td className={`px-8 py-5 text-right text-sm font-medium text-[#6d75a6] ${cellDividerClass}`}>
+                    <td className={`px-4 py-5 text-right text-sm font-medium text-[#6d75a6] ${cellDividerClass}`}>
                       {formatMoney(it.price, inv.currency, inv.currencySymbol)}
                     </td>
                     <td
-                      className={`px-8 py-5 text-right text-base font-semibold text-[#1f2857] ${
+                      className={`px-6 py-5 text-right text-base font-semibold text-[#1f2857] ${
                         isFirst ? "rounded-tr-[28px]" : ""
                       } ${isLast ? "rounded-br-[28px]" : ""} ${cellDividerClass}`}
                     >
@@ -181,31 +181,31 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
           </table>
         </div>
 
-        <div className="flex flex-col gap-6 md:flex-row md:items-end">
-          <div className="flex-1 rounded-[28px] border border-slate-200 bg-slate-50/80 p-6 text-sm text-slate-600 shadow-soft">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Terms & Conditions</div>
-            <p className="mt-3 leading-relaxed">{inv.terms}</p>
-          </div>
-          <div className="rounded-[28px] border border-slate-200 bg-white p-6 text-right shadow-soft md:w-72">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Total amount</div>
-            <div className="mt-4">
-              <MoneyBig value={grand} inv={inv} />
-            </div>
-            <div className="mt-6 space-y-2 text-sm text-slate-500">
-              <div className="flex justify-between text-slate-400">
+        <div className="flex justify-end">
+          <div className="w-full max-w-xs text-right">
+            <div className="space-y-2 text-sm text-slate-500">
+              <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span>{formatMoney(sub, inv.currency, inv.currencySymbol)}</span>
               </div>
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between">
                 <span>Discount</span>
                 <span>{formatMoney(inv.discount || 0, inv.currency, inv.currencySymbol)}</span>
               </div>
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between">
                 <span>Tax</span>
                 <span>{formatMoney(inv.tax || 0, inv.currency, inv.currencySymbol)}</span>
               </div>
             </div>
+            <div className="mt-4 text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Total amount:</div>
+            <div className="mt-2 text-4xl font-extrabold" style={{ color: "var(--brand-color)" }}>
+              {formatMoney(grand, inv.currency, inv.currencySymbol)}
+            </div>
           </div>
+        </div>
+        <div className="mt-6 rounded-[28px] border border-slate-200 bg-slate-50/80 p-6 text-sm text-slate-600 shadow-soft">
+          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Terms & Conditions</div>
+          <p className="mt-3 leading-relaxed">{inv.terms}</p>
         </div>
       </div>
     </TemplateFrame>
