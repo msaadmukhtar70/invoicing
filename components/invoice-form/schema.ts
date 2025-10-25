@@ -7,13 +7,18 @@ import type { GradientId } from "@/lib/gradients";
 import { currencyCodes, hexColorRegExp } from "./constants";
 
 const gradientIdSet = new Set(gradientOptions.map((option) => option.id));
+const requiredText = (label: string) => z.string().trim().min(1, { message: `${label} is required` });
+
+const nonNegativeNumber = (label: string) => z.number().min(0, { message: `${label} cannot be negative` });
+
+const optionalNonNegativeNumber = (label: string) => nonNegativeNumber(label).optional();
 
 export const invoiceFormSchema = z.object({
-  brandName: z.string().min(1),
+  brandName: requiredText("Brand name"),
   brandLogoDataUrl: z.string().optional(),
-  invoiceNumber: z.string().min(1),
-  issuedDate: z.string().min(1),
-  dueDate: z.string().min(1),
+  invoiceNumber: requiredText("Invoice number"),
+  issuedDate: requiredText("Invoice date"),
+  dueDate: requiredText("Payment due date"),
   currency: z.enum(currencyCodes),
   currencySymbol: z.string().optional().transform((value) => value ?? ""),
   brandColor: z
@@ -23,7 +28,7 @@ export const invoiceFormSchema = z.object({
       message: "Invalid color",
     }),
   from: z.object({
-    name: z.string().min(1),
+    name: requiredText("Sender name"),
     taxNumber: z.string().optional(),
     address: z.string().optional(),
     email: z.string().optional(),
@@ -31,7 +36,7 @@ export const invoiceFormSchema = z.object({
     website: z.string().optional(),
   }),
   to: z.object({
-    name: z.string().min(1),
+    name: requiredText("Customer name"),
     taxNumber: z.string().optional(),
     address: z.string().optional(),
     email: z.string().optional(),
@@ -42,20 +47,20 @@ export const invoiceFormSchema = z.object({
     z.object({
       id: z.string(),
       description: z.string().min(1).or(z.literal("")),
-      qty: z.number().min(0),
-      price: z.number().min(0),
+      qty: nonNegativeNumber("Quantity"),
+      price: nonNegativeNumber("Price"),
     })
   ),
   terms: z.string().optional(),
-  discount: z.number().optional(),
-  tax: z.number().optional(),
+  discount: optionalNonNegativeNumber("Discount"),
+  tax: optionalNonNegativeNumber("Tax"),
   project: z
     .object({
-      name: z.string().optional(),
-      code: z.string().optional(),
-      startDate: z.string().optional(),
-      endDate: z.string().optional(),
-      notes: z.string().optional(),
+      name: z.string().trim().optional(),
+      code: z.string().trim().optional(),
+      startDate: z.string().trim().optional(),
+      endDate: z.string().trim().optional(),
+      notes: z.string().trim().optional(),
     })
     .optional(),
   gradient: z

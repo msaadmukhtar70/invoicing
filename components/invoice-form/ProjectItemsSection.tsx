@@ -4,18 +4,22 @@ import { useFieldArray, useWatch } from "react-hook-form";
 
 import type { CurrencyCode } from "@/lib/types";
 
-import { currencyMetaByCode, inputClass, labelClass, sectionClass } from "./constants";
+import { currencyMetaByCode, inputClass, inputErrorClass, labelClass, sectionClass, errorTextClass } from "./constants";
 import type { InvoiceFormContext } from "./formTypes";
 import type { InvoiceFormValues } from "./schema";
 import { createItemId, sanitizeNumber } from "./utils";
 
 type ProjectItemsSectionProps = {
-  form: Pick<InvoiceFormContext, "register" | "control">;
+  form: Pick<InvoiceFormContext, "register" | "control" | "formState">;
   className?: string;
 };
 
 const ProjectItemsSection: React.FC<ProjectItemsSectionProps> = ({ form, className }) => {
-  const { register, control } = form;
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = form;
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -75,6 +79,11 @@ const ProjectItemsSection: React.FC<ProjectItemsSectionProps> = ({ form, classNa
                 fields.map((field, index) => {
                   const currentItem = itemsList?.[index];
                   const lineTotal = sanitizeNumber(currentItem?.qty) * sanitizeNumber(currentItem?.price);
+                  const itemError = Array.isArray(errors.items) ? errors.items[index] : undefined;
+                  const qtyError = itemError?.qty?.message as string | undefined;
+                  const priceError = itemError?.price?.message as string | undefined;
+                  const qtyErrorId = qtyError ? `items-${index}-qty-error` : undefined;
+                  const priceErrorId = priceError ? `items-${index}-price-error` : undefined;
                   return (
                     <div
                       key={field.id}
@@ -89,9 +98,13 @@ const ProjectItemsSection: React.FC<ProjectItemsSectionProps> = ({ form, classNa
                         type="number"
                         min={0}
                         step={1}
-                        className={`${inputClass} rounded-full text-center row-start-1`}
+                        className={`${inputClass} rounded-full text-center row-start-1 ${qtyError ? inputErrorClass : ""}`}
                         placeholder="1"
-                        {...register(`items.${index}.qty` as const, { valueAsNumber: true })}
+                        aria-invalid={qtyError ? "true" : "false"}
+                        aria-describedby={qtyErrorId}
+                        {...register(`items.${index}.qty` as const, {
+                          setValueAs: (value) => (value === "" || value === null ? undefined : Number(value)),
+                        })}
                       />
                       <div className="row-start-1 flex items-center justify-center gap-2">
                         <span className="text-xs font-semibold text-slate-400">{currencySymbol}</span>
@@ -99,9 +112,13 @@ const ProjectItemsSection: React.FC<ProjectItemsSectionProps> = ({ form, classNa
                           type="number"
                           min={0}
                           step="0.01"
-                          className={`${inputClass} rounded-full`}
+                          className={`${inputClass} rounded-full ${priceError ? inputErrorClass : ""}`}
                           placeholder="0.00"
-                          {...register(`items.${index}.price` as const, { valueAsNumber: true })}
+                          aria-invalid={priceError ? "true" : "false"}
+                          aria-describedby={priceErrorId}
+                          {...register(`items.${index}.price` as const, {
+                            setValueAs: (value) => (value === "" || value === null ? undefined : Number(value)),
+                          })}
                         />
                       </div>
                       <span className="row-start-1 text-right text-sm font-semibold text-slate-800">
@@ -115,6 +132,16 @@ const ProjectItemsSection: React.FC<ProjectItemsSectionProps> = ({ form, classNa
                         <Trash2 className="h-3.5 w-3.5" />
                         Remove
                       </button>
+                      {qtyError ? (
+                        <span id={qtyErrorId} className={`col-start-2 col-end-3 row-start-2 ${errorTextClass} mt-0`}>
+                          {qtyError}
+                        </span>
+                      ) : null}
+                      {priceError ? (
+                        <span id={priceErrorId} className={`col-start-3 col-end-4 row-start-2 ${errorTextClass} mt-0`}>
+                          {priceError}
+                        </span>
+                      ) : null}
                     </div>
                   );
                 })

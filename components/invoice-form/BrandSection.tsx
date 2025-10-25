@@ -6,16 +6,30 @@ import { mixHexColors, popularBrandColors, defaultBrandColor, NO_BRAND_COLOR } f
 import { defaultGradientId, gradientOptions } from "@/lib/gradients";
 import type { GradientId } from "@/lib/gradients";
 
-import { hexColorRegExp, labelClass, sectionClass, dashboardAccentColor } from "./constants";
+import {
+  hexColorRegExp,
+  labelClass,
+  sectionClass,
+  dashboardAccentColor,
+  inputErrorClass,
+  errorTextClass,
+  requiredMarkClass,
+  requiredSrOnlyClass,
+} from "./constants";
 import type { InvoiceFormContext } from "./formTypes";
 
 type BrandSectionProps = {
-  form: Pick<InvoiceFormContext, "register" | "control" | "setValue">;
+  form: Pick<InvoiceFormContext, "register" | "control" | "setValue" | "formState">;
   className?: string;
 };
 
 const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
-  const { register, control, setValue } = form;
+  const {
+    register,
+    control,
+    setValue,
+    formState: { errors },
+  } = form;
 
   const brandLogo = useWatch({ control, name: "brandLogoDataUrl" }) as string | undefined;
   const brandColorRaw = useWatch({ control, name: "brandColor" }) as string | undefined;
@@ -113,6 +127,10 @@ const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
   const brandColorField = register("brandColor");
   const gradientField = register("gradient");
 
+  const brandNameError = errors.brandName?.message as string | undefined;
+  const brandColorError = errors.brandColor?.message as string | undefined;
+  const gradientError = errors.gradient?.message as string | undefined;
+
   const handleGradientPick = React.useCallback(
     (id: GradientId) => {
       setValue("gradient", id, { shouldDirty: true, shouldTouch: true, shouldValidate: true });
@@ -155,13 +173,26 @@ const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
         <div>
           <label className={labelClass} htmlFor="brandName">
             Logotype
+            <span className={requiredMarkClass} aria-hidden="true">
+              *
+            </span>
+            <span className={requiredSrOnlyClass}>Required</span>
           </label>
           <input
             id="brandName"
-            className="mt-2 h-14 w-full rounded-2xl border border-slate-200 bg-white px-5 text-center text-xl font-black tracking-tight text-slate-800 outline-none transition focus:border-brix-blue focus:ring-2 focus:ring-brix-blue/30"
+            className={`mt-2 h-14 w-full rounded-2xl border border-slate-200 bg-white px-5 text-center text-xl font-black tracking-tight text-slate-800 outline-none transition focus:border-brix-blue focus:ring-2 focus:ring-brix-blue/30 ${
+              brandNameError ? inputErrorClass : ""
+            }`}
             placeholder="Enter brand name"
+            aria-invalid={brandNameError ? "true" : "false"}
+            aria-describedby={brandNameError ? "brandName-error" : undefined}
             {...register("brandName")}
           />
+          {brandNameError ? (
+            <p id="brandName-error" className={errorTextClass}>
+              {brandNameError}
+            </p>
+          ) : null}
         </div>
         <div>
           <div className={labelClass}>Brand color</div>
@@ -254,7 +285,11 @@ const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
                 onChange={(event) => handleCustomHexInputChange(event.target.value)}
                 onBlur={handleCustomHexInputBlur}
                 placeholder="#000000"
-                className="w-[3.5rem] min-w-0 rounded-full border border-slate-200 bg-white px-2 py-1 text-[11px] font-semibold uppercase text-slate-600 outline-none transition focus:border-brix-blue focus:ring-2 focus:ring-brix-blue/30 sm:w-[4.5rem] sm:px-3"
+                className={`w-[3.5rem] min-w-0 rounded-full border border-slate-200 bg-white px-2 py-1 text-[11px] font-semibold uppercase text-slate-600 outline-none transition focus:border-brix-blue focus:ring-2 focus:ring-brix-blue/30 sm:w-[4.5rem] sm:px-3 ${
+                  brandColorError ? inputErrorClass : ""
+                }`}
+                aria-invalid={brandColorError ? "true" : "false"}
+                aria-describedby={brandColorError ? "brandColor-error" : undefined}
               />
               <Check
                 aria-hidden="true"
@@ -264,11 +299,21 @@ const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
               />
             </div>
           </div>
+          {brandColorError ? (
+            <p id="brandColor-error" className={errorTextClass}>
+              {brandColorError}
+            </p>
+          ) : null}
         </div>
         <div>
           <div className={labelClass}>Gradient</div>
           <input type="hidden" {...gradientField} value={gradientValue} />
-          <div className="mt-3 grid grid-cols-1 gap-3">
+          <div
+            className="mt-3 grid grid-cols-1 gap-3"
+            role="group"
+            aria-invalid={gradientError ? "true" : "false"}
+            aria-describedby={gradientError ? "gradient-error" : undefined}
+          >
             {gradientOptions.map((option) => {
               const isActive = option.id === selectedGradient.id;
               return (
@@ -298,6 +343,11 @@ const BrandSection: React.FC<BrandSectionProps> = ({ form, className }) => {
               );
             })}
           </div>
+          {gradientError ? (
+            <p id="gradient-error" className={errorTextClass}>
+              {gradientError}
+            </p>
+          ) : null}
           <div className="mt-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-inner">
             <div className={`relative mx-auto h-28 w-full max-w-[220px] overflow-hidden rounded-[32px] ${selectedGradient.backgroundClass}`}>
               <div className={`absolute inset-0 bg-gradient-to-br ${selectedGradient.highlightClass} opacity-70`} />

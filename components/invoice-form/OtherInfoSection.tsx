@@ -8,6 +8,8 @@ import {
   currencyMetaByCode,
   labelClass,
   sectionClass,
+  requiredMarkClass,
+  requiredSrOnlyClass,
 } from "./constants";
 import type { InvoiceFormContext } from "./formTypes";
 
@@ -36,7 +38,13 @@ const OtherInfoSection: React.FC<OtherInfoSectionProps> = ({ form, className }) 
       <div className="rounded-2xl bg-[#F3F6FD] px-5 py-3 text-sm font-semibold text-slate-700">Other information</div>
       <div className="pt-5">
         <div>
-          <div className={labelClass}>Currencies</div>
+          <div className={labelClass}>
+            Currencies
+            <span className={requiredMarkClass} aria-hidden="true">
+              *
+            </span>
+            <span className={requiredSrOnlyClass}>Required</span>
+          </div>
           <div className="mt-3 rounded-[32px] border border-slate-200 bg-white p-4 shadow-inner">
             <div className="flex flex-wrap gap-2 text-[10px] sm:text-[11px]">
               {currencyMeta.map((currency) => (

@@ -24,6 +24,12 @@ export const inputClass =
 export const textareaClass =
   "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-brix-blue focus:bg-white focus:ring-2 focus:ring-brix-blue/30";
 
+export const inputErrorClass =
+  "border-rose-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-200";
+export const errorTextClass = "mt-1 text-xs font-semibold text-rose-500";
+export const requiredMarkClass = "ml-1 text-rose-500";
+export const requiredSrOnlyClass = "sr-only";
+
 export const dashboardAccentColor = "#FF5722";
 
 export const hexColorRegExp = /^#([0-9A-Fa-f]{6})$/;

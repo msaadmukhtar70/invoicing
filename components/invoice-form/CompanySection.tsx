@@ -1,15 +1,29 @@
 import React from "react";
 import type { InvoiceFormContext } from "./formTypes";
 
-import { inputClass, labelClass, sectionClass, textareaClass } from "./constants";
+import {
+  inputClass,
+  inputErrorClass,
+  labelClass,
+  sectionClass,
+  textareaClass,
+  errorTextClass,
+  requiredMarkClass,
+  requiredSrOnlyClass,
+} from "./constants";
 
 type CompanySectionProps = {
-  form: Pick<InvoiceFormContext, "register">;
+  form: Pick<InvoiceFormContext, "register" | "formState">;
   className?: string;
 };
 
 const CompanySection: React.FC<CompanySectionProps> = ({ form, className }) => {
-  const { register } = form;
+  const {
+    register,
+    formState: { errors },
+  } = form;
+
+  const senderNameError = errors.from?.name?.message as string | undefined;
 
   return (
     <section className={`${sectionClass} overflow-visible ${className ?? ""}`}>
@@ -18,13 +32,24 @@ const CompanySection: React.FC<CompanySectionProps> = ({ form, className }) => {
         <div className="sm:col-span-2">
           <label className={labelClass} htmlFor="fromName">
             Name / Company
+            <span className={requiredMarkClass} aria-hidden="true">
+              *
+            </span>
+            <span className={requiredSrOnlyClass}>Required</span>
           </label>
           <input
             id="fromName"
-            className={`${inputClass} mt-2 rounded-full`}
+            className={`${inputClass} mt-2 rounded-full ${senderNameError ? inputErrorClass : ""}`}
             placeholder="Enter your company or legal name"
+            aria-invalid={senderNameError ? "true" : "false"}
+            aria-describedby={senderNameError ? "fromName-error" : undefined}
             {...register("from.name")}
           />
+          {senderNameError ? (
+            <p id="fromName-error" className={errorTextClass}>
+              {senderNameError}
+            </p>
+          ) : null}
         </div>
         <div className="sm:col-span-2">
           <label className={labelClass} htmlFor="fromAddress">

@@ -4,23 +4,29 @@ import { useWatch } from "react-hook-form";
 import { total } from "@/lib/currency";
 import type { CurrencyCode } from "@/lib/types";
 
-import { inputClass, labelClass, sectionClass } from "./constants";
+import { inputClass, inputErrorClass, labelClass, sectionClass, errorTextClass } from "./constants";
 import { sanitizeNumber } from "./utils";
 import type { InvoiceFormContext } from "./formTypes";
 import type { InvoiceFormValues } from "./schema";
 
 type PriceSectionProps = {
-  form: Pick<InvoiceFormContext, "register" | "control">;
+  form: Pick<InvoiceFormContext, "register" | "control" | "formState">;
   className?: string;
 };
 
 const PriceSection: React.FC<PriceSectionProps> = ({ form, className }) => {
-  const { register, control } = form;
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = form;
 
   const discountRaw = useWatch({ control, name: "discount" }) as number | undefined;
   const taxRaw = useWatch({ control, name: "tax" }) as number | undefined;
   const items = useWatch({ control, name: "items" }) as InvoiceFormValues["items"];
   const selectedCurrency = useWatch({ control, name: "currency" }) as CurrencyCode | undefined;
+  const discountError = errors.discount?.message as string | undefined;
+  const taxError = errors.tax?.message as string | undefined;
 
   const discountValue = sanitizeNumber(discountRaw);
   const taxValue = sanitizeNumber(taxRaw);
@@ -59,9 +65,18 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form, className }) => {
             step="0.01"
             min={0}
             placeholder="Enter discount (optional)"
-            className={`${inputClass} mt-2 rounded-full`}
-            {...register("discount", { valueAsNumber: true })}
+            className={`${inputClass} mt-2 rounded-full ${discountError ? inputErrorClass : ""}`}
+            aria-invalid={discountError ? "true" : "false"}
+            aria-describedby={discountError ? "discount-error" : undefined}
+            {...register("discount", {
+              setValueAs: (value) => (value === "" || value === null ? undefined : Number(value)),
+            })}
           />
+          {discountError ? (
+            <p id="discount-error" className={errorTextClass}>
+              {discountError}
+            </p>
+          ) : null}
         </div>
         <div>
           <label className={labelClass} htmlFor="tax">
@@ -73,9 +88,18 @@ const PriceSection: React.FC<PriceSectionProps> = ({ form, className }) => {
             step="0.01"
             min={0}
             placeholder="Enter tax amount"
-            className={`${inputClass} mt-2 rounded-full`}
-            {...register("tax", { valueAsNumber: true })}
+            className={`${inputClass} mt-2 rounded-full ${taxError ? inputErrorClass : ""}`}
+            aria-invalid={taxError ? "true" : "false"}
+            aria-describedby={taxError ? "tax-error" : undefined}
+            {...register("tax", {
+              setValueAs: (value) => (value === "" || value === null ? undefined : Number(value)),
+            })}
           />
+          {taxError ? (
+            <p id="tax-error" className={errorTextClass}>
+              {taxError}
+            </p>
+          ) : null}
         </div>
         <div>
           <div className={labelClass}>Summary</div>

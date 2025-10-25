@@ -2,16 +2,30 @@ import React from "react";
 import { X } from "lucide-react";
 import { useWatch } from "react-hook-form";
 
-import { inputClass, labelClass, sectionClass, textareaClass } from "./constants";
+import {
+  inputClass,
+  inputErrorClass,
+  labelClass,
+  sectionClass,
+  textareaClass,
+  errorTextClass,
+  requiredMarkClass,
+  requiredSrOnlyClass,
+} from "./constants";
 import type { InvoiceFormContext } from "./formTypes";
 
 type ClientSectionProps = {
-  form: Pick<InvoiceFormContext, "register" | "control" | "setValue">;
+  form: Pick<InvoiceFormContext, "register" | "control" | "setValue" | "formState">;
   className?: string;
 };
 
 const ClientSection: React.FC<ClientSectionProps> = ({ form, className }) => {
-  const { register, control, setValue } = form;
+  const {
+    register,
+    control,
+    setValue,
+    formState: { errors },
+  } = form;
 
   const clientPhoto = useWatch({ control, name: "to.photoDataUrl" }) as string | undefined;
   const clientPhotoRef = React.useRef<HTMLInputElement>(null);
@@ -40,6 +54,8 @@ const ClientSection: React.FC<ClientSectionProps> = ({ form, className }) => {
     }
   }, [setValue]);
 
+  const clientNameError = errors.to?.name?.message as string | undefined;
+
   return (
     <section className={`${sectionClass} overflow-hidden ${className ?? ""}`}>
       <div className="rounded-2xl bg-[#F3F6FD] px-5 py-3 text-sm font-semibold text-slate-700">Bill to:</div>
@@ -47,13 +63,24 @@ const ClientSection: React.FC<ClientSectionProps> = ({ form, className }) => {
         <div>
           <label className={labelClass} htmlFor="toName">
             Customer
+            <span className={requiredMarkClass} aria-hidden="true">
+              *
+            </span>
+            <span className={requiredSrOnlyClass}>Required</span>
           </label>
           <input
             id="toName"
-            className={`${inputClass} mt-2 rounded-full`}
+            className={`${inputClass} mt-2 rounded-full ${clientNameError ? inputErrorClass : ""}`}
             placeholder="Enter customer or company name"
+            aria-invalid={clientNameError ? "true" : "false"}
+            aria-describedby={clientNameError ? "toName-error" : undefined}
             {...register("to.name")}
           />
+          {clientNameError ? (
+            <p id="toName-error" className={errorTextClass}>
+              {clientNameError}
+            </p>
+          ) : null}
         </div>
         <div>
           <label className={labelClass} htmlFor="toAddress">
