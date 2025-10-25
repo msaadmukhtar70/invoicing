@@ -182,7 +182,7 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
         </div>
 
         <div className="flex justify-end">
-          <div className="w-full max-w-xs text-right">
+          <div className="w-full max-w-[250px] pr-6 text-right">
             <div className="space-y-2 text-sm text-slate-500">
               <div className="flex justify-between">
                 <span>Subtotal</span>
@@ -203,7 +203,7 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
             </div>
           </div>
         </div>
-        <div className="mt-6 rounded-[28px] border border-slate-200 bg-slate-50/80 p-6 text-sm text-slate-600 shadow-soft">
+        <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Terms & Conditions</div>
           <p className="mt-3 leading-relaxed">{inv.terms}</p>
         </div>
