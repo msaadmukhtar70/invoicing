@@ -36,7 +36,7 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
         <div className="flex flex-col gap-6 md:flex-row">
           <div className="flex-1">
             <div
-              className="relative flex h-full min-h-[220px] flex-col justify-between overflow-hidden rounded-[32px] bg-[var(--brand-color)] p-9 text-white shadow-[0_28px_52px_-24px_var(--brand-color-shadow)]"
+              className="relative flex h-full min-h-[220px] flex-col justify-between overflow-hidden rounded-[32px] bg-[var(--brand-color)] p-9 text-white"
               style={{
                 background: "linear-gradient(140deg, var(--brand-color), var(--brand-color-light))",
               }}
@@ -90,23 +90,26 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
               )}
             </div>
           </div>
-          <div className="flex w-full flex-col gap-4 md:w-72">
-            <div className="rounded-[28px] border border-slate-200 bg-white p-6 text-right shadow-soft">
-              <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-                Amount due
+          <div className="flex w-full flex-col md:w-80">
+            <div className="rounded-[32px] bg-[#f1f4ff] p-6">
+              <div
+                className="rounded-[26px] bg-white p-6 text-left"
+                style={{ boxShadow: "0px 2px 8px 3px rgba(0,0,0,0.05)" }}
+              >
+                <div className="text-[11px] font-semibold uppercase tracking-[0.34em] text-slate-400">
+                  Amount Due
+                </div>
+                <div className="mt-4">
+                  <MoneyBig value={grand} inv={inv} />
+                </div>
+                {dueDate && <div className="mt-2 text-sm text-slate-400">{dueDate}</div>}
               </div>
-              <div className="mt-3">
-                <MoneyBig value={grand} inv={inv} />
+              <div className="mt-7 text-[11px] font-semibold uppercase tracking-[0.34em] text-slate-400">
+                Invoice To:
               </div>
-              {dueDate && <div className="mt-3 text-sm text-slate-500">{dueDate}</div>}
-            </div>
-            <div className="rounded-[28px] border border-slate-200 bg-slate-50/60 p-6 text-sm text-slate-600 shadow-soft">
-              <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-                Invoice to
-              </div>
-              <div className="mt-3 font-semibold text-slate-800">{inv.to.name}</div>
-              {inv.to.phone && <div className="text-slate-500">{inv.to.phone}</div>}
-              {inv.to.address && <div className="text-slate-500">{inv.to.address}</div>}
+              <div className="mt-3 text-lg font-semibold text-slate-800">{inv.to.name}</div>
+              {inv.to.phone && <div className="text-sm text-slate-500">{inv.to.phone}</div>}
+              {inv.to.address && <div className="text-sm leading-relaxed text-slate-500">{inv.to.address}</div>}
             </div>
           </div>
         </div>
@@ -115,7 +118,10 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
             Invoice details
           </div>
-          <div className="mt-4 grid gap-6 rounded-[28px] border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-soft md:grid-cols-3">
+          <div
+            className="mt-4 grid gap-6 rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-600 md:grid-cols-3"
+            style={{ boxShadow: "0px 2px 8px 3px rgba(0,0,0,0.05)" }}
+          >
             <div>
               <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">Invoice number</div>
               <div className="mt-1 text-base font-semibold text-slate-800">No.: {inv.invoiceNumber || "--"}</div>
