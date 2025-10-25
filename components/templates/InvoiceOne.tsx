@@ -15,8 +15,6 @@ const formatDisplayDate = (value?: string) => {
   });
 };
 
-const LOGO_ACTIVE_DOTS = new Set([0, 1, 3, 4, 5, 6, 7]);
-
 export default function InvoiceOne({ inv }: { inv: Invoice }) {
   const { sub, grand } = computeTotals(inv);
   const issuedDate = formatDisplayDate(inv.issuedDate);
@@ -57,20 +55,11 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
               </div>
               <div className="relative z-10 space-y-4">
                 <div className="flex items-center gap-5">
-                  <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl bg-transparent p-0">
-                    {brandLogoUrl ? (
+                  {brandLogoUrl && (
+                    <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl bg-transparent p-0">
                       <img src={brandLogoUrl} alt={brandLogoAlt} className="h-full w-full object-contain" />
-                    ) : (
-                      <div className="grid h-full w-full grid-cols-3 gap-3 rounded-3xl bg-white/10 p-2 backdrop-blur-sm">
-                        {Array.from({ length: 9 }).map((_, index) => (
-                          <span
-                            key={index}
-                            className={`h-4 w-4 rounded-full ${LOGO_ACTIVE_DOTS.has(index) ? "bg-white" : "bg-white/0"}`}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                   {hasBrandName && (
                     <div className="text-[38px] font-extrabold leading-none tracking-tight text-white">{brandTitle}</div>
                   )}
