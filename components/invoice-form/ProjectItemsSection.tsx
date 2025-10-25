@@ -66,7 +66,7 @@ const ProjectItemsSection: React.FC<ProjectItemsSectionProps> = ({ form, classNa
             </button>
           </div>
           <div className="mt-3 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-inner">
-            <div className="grid grid-cols-[minmax(0,3fr)_80px_120px_110px] gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <div className="hidden grid-cols-[minmax(0,3fr)_80px_120px_110px] gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 sm:grid">
               <span>Description</span>
               <span className="text-center">Qty</span>
               <span className="text-center">Price</span>
@@ -87,58 +87,82 @@ const ProjectItemsSection: React.FC<ProjectItemsSectionProps> = ({ form, classNa
                   return (
                     <div
                       key={field.id}
-                      className="grid grid-cols-[minmax(0,3fr)_80px_120px_110px] grid-rows-[auto_auto] items-center gap-x-2.5 gap-y-2 px-4 py-3"
+                      className="grid grid-cols-1 items-start gap-4 px-4 py-3 sm:grid-cols-[minmax(0,3fr)_80px_120px_110px] sm:grid-rows-[auto_auto] sm:items-center sm:gap-x-2.5 sm:gap-y-2"
                     >
-                      <input
-                        className={`${inputClass} rounded-full row-start-1`}
-                        placeholder="Description"
-                        {...register(`items.${index}.description` as const)}
-                      />
-                      <input
-                        type="number"
-                        min={0}
-                        step={1}
-                        className={`${inputClass} rounded-full text-center row-start-1 ${qtyError ? inputErrorClass : ""}`}
-                        placeholder="1"
-                        aria-invalid={qtyError ? "true" : "false"}
-                        aria-describedby={qtyErrorId}
-                        {...register(`items.${index}.qty` as const, {
-                          setValueAs: (value) => (value === "" || value === null ? undefined : Number(value)),
-                        })}
-                      />
-                      <div className="row-start-1 flex items-center justify-center gap-2">
-                        <span className="text-xs font-semibold text-slate-400">{currencySymbol}</span>
+                      <div className="flex flex-col gap-1 sm:row-start-1 sm:gap-0">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 sm:hidden">
+                          Description
+                        </span>
+                        <input
+                          className={`${inputClass} rounded-full`}
+                          placeholder="Description"
+                          {...register(`items.${index}.description` as const)}
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1 sm:row-start-1 sm:gap-0">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 sm:hidden">Qty</span>
                         <input
                           type="number"
                           min={0}
-                          step="0.01"
-                          className={`${inputClass} rounded-full ${priceError ? inputErrorClass : ""}`}
-                          placeholder="0.00"
-                          aria-invalid={priceError ? "true" : "false"}
-                          aria-describedby={priceErrorId}
-                          {...register(`items.${index}.price` as const, {
+                          step={1}
+                          className={`${inputClass} rounded-full text-center ${qtyError ? inputErrorClass : ""}`}
+                          placeholder="1"
+                          aria-invalid={qtyError ? "true" : "false"}
+                          aria-describedby={qtyErrorId}
+                          {...register(`items.${index}.qty` as const, {
                             setValueAs: (value) => (value === "" || value === null ? undefined : Number(value)),
                           })}
                         />
                       </div>
-                      <span className="row-start-1 text-right text-sm font-semibold text-slate-800">
-                        {currencyFormatter.format(lineTotal || 0)}
-                      </span>
+                      <div className="flex flex-col gap-1 sm:row-start-1 sm:gap-0 sm:items-center">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 sm:hidden">
+                          Price
+                        </span>
+                        <div className="flex items-center gap-2 sm:justify-center">
+                          <span className="text-xs font-semibold text-slate-400">{currencySymbol}</span>
+                          <input
+                            type="number"
+                            min={0}
+                            step="0.01"
+                            className={`${inputClass} rounded-full ${priceError ? inputErrorClass : ""}`}
+                            placeholder="0.00"
+                            aria-invalid={priceError ? "true" : "false"}
+                            aria-describedby={priceErrorId}
+                            {...register(`items.${index}.price` as const, {
+                              setValueAs: (value) => (value === "" || value === null ? undefined : Number(value)),
+                            })}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1 sm:row-start-1 sm:gap-0">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 sm:hidden">
+                          Total
+                        </span>
+                        <span className="text-left text-sm font-semibold text-slate-800 sm:text-right">
+                          {currencyFormatter.format(lineTotal || 0)}
+                        </span>
+                      </div>
                       <button
                         type="button"
                         onClick={() => remove(index)}
-                        className="col-start-1 col-end-2 row-start-2 inline-flex w-max items-center gap-1 rounded-full border border-transparent px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400 transition hover:border-rose-200 hover:text-rose-500 whitespace-nowrap"
+                        className="inline-flex w-max items-center gap-1 rounded-full border border-transparent px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400 transition hover:border-rose-200 hover:text-rose-500 whitespace-nowrap sm:col-start-1 sm:col-end-2 sm:row-start-2"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                         Remove
                       </button>
                       {qtyError ? (
-                        <span id={qtyErrorId} className={`col-start-2 col-end-3 row-start-2 ${errorTextClass} mt-0`}>
+                        <span
+                          id={qtyErrorId}
+                          className={`mt-0 ${errorTextClass} sm:col-start-2 sm:col-end-3 sm:row-start-2`}
+                        >
                           {qtyError}
                         </span>
                       ) : null}
                       {priceError ? (
-                        <span id={priceErrorId} className={`col-start-3 col-end-4 row-start-2 ${errorTextClass} mt-0`}>
+                        <span
+                          id={priceErrorId}
+                          className={`mt-0 ${errorTextClass} sm:col-start-3 sm:col-end-4 sm:row-start-2`}
+                        >
                           {priceError}
                         </span>
                       ) : null}
