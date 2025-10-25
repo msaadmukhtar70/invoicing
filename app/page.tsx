@@ -2,13 +2,12 @@
 import React from "react";
 import { PenSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
-import InvoiceForm from "@/components/InvoiceForm";
+import InvoiceForm, { InvoiceFormHandle } from "@/components/InvoiceForm";
 import { Invoice } from "@/lib/types";
 import { sampleInvoice } from "@/lib/sampleData";
 import { loadInvoice, saveInvoice } from "@/lib/storage";
 import { defaultGradientId } from "@/lib/gradients";
 import { defaultBrandColor, NO_BRAND_COLOR } from "@/lib/colors";
-import { invoiceFormSchema } from "@/components/invoice-form/schema";
 
 const ensureBrandColor = (invoice: Invoice) => {
   const hasBrandColor = Object.prototype.hasOwnProperty.call(invoice, "brandColor");
@@ -58,7 +57,7 @@ const emptyInvoice: Invoice = {
 export default function HomePage() {
   const [invoice, setInvoice] = React.useState<Invoice>(sampleInvoice);
   const [formEpoch, setFormEpoch] = React.useState(0);
-  const [validationMessages, setValidationMessages] = React.useState<string[]>([]);
+  const invoiceFormRef = React.useRef<InvoiceFormHandle>(null);
   const router = useRouter();
   const hasHydrated = React.useRef(false);
 
@@ -119,17 +118,12 @@ export default function HomePage() {
     setFormEpoch((prev) => prev + 1);
   };
 
-  const handleOpenPreview = React.useCallback(() => {
-    const result = invoiceFormSchema.safeParse(invoice);
-    if (result.success) {
-      setValidationMessages([]);
+  const handleOpenPreview = React.useCallback(async () => {
+    const isValid = await invoiceFormRef.current?.validate();
+    if (isValid) {
       router.push("/preview");
-      return;
     }
-
-    const uniqueMessages = Array.from(new Set(result.error.issues.map((issue) => issue.message)));
-    setValidationMessages(uniqueMessages);
-  }, [invoice, router]);
+  }, [router]);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#F6F8FF] via-white to-[#FEF5F0] pb-16">
@@ -157,19 +151,6 @@ export default function HomePage() {
                   Open preview
                 </button>
               </div>
-              {validationMessages.length > 0 ? (
-                <div
-                  className="mt-3 w-full rounded-3xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 md:mt-4"
-                  role="alert"
-                >
-                  <p className="font-semibold">Please complete the required fields:</p>
-                  <ul className="mt-2 list-disc space-y-1 pl-5">
-                    {validationMessages.map((message) => (
-                      <li key={message}>{message}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
             </div>
           </div>
         </div>
@@ -177,7 +158,7 @@ export default function HomePage() {
         <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-white/90 p-4 shadow-soft sm:p-6 md:p-8">
           <div className="pointer-events-none absolute inset-x-6 top-6 h-24 rounded-[28px] bg-gradient-to-b from-slate-100/80 to-transparent" />
           <div className="relative z-10">
-            <InvoiceForm key={formEpoch} initial={invoice} onChange={setInvoice} />
+            <InvoiceForm ref={invoiceFormRef} key={formEpoch} initial={invoice} onChange={setInvoice} />
           </div>
         </div>
       </div>

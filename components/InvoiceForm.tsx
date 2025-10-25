@@ -19,6 +19,15 @@ import { invoiceFormSchema } from "./invoice-form/schema";
 
 const fallbackClone = rfdc();
 
+export type InvoiceFormHandle = {
+  validate: () => Promise<boolean>;
+};
+
+type InvoiceFormProps = {
+  initial: Invoice;
+  onChange: (inv: Invoice) => void;
+};
+
 function deepClone<T>(value: T): T {
   if (typeof structuredClone === "function") {
     return structuredClone(value);
@@ -32,13 +41,10 @@ const toInvoice = (values: InvoiceFormValues): Invoice => ({
   currencySymbol: values.currencySymbol ?? "",
 }) as Invoice;
 
-export default function InvoiceForm({
-  initial,
-  onChange,
-}: {
-  initial: Invoice;
-  onChange: (inv: Invoice) => void;
-}) {
+const InvoiceForm = React.forwardRef<InvoiceFormHandle, InvoiceFormProps>(function InvoiceForm(
+  { initial, onChange },
+  ref
+) {
   // Centralize defaults so the form starts from a predictable baseline.
   const defaultValues: InvoiceFormValues = {
     ...initial,
@@ -55,6 +61,17 @@ export default function InvoiceForm({
   });
 
   const { watch, getValues } = form;
+
+  React.useImperativeHandle(
+    ref,
+    () => ({
+      validate: async () => {
+        const isValid = await form.trigger(undefined, { shouldFocus: true });
+        return isValid;
+      },
+    }),
+    [form]
+  );
 
   React.useEffect(() => {
     // Subscribe to value changes and emit a safe copy upstream.
@@ -78,4 +95,6 @@ export default function InvoiceForm({
       </div>
     </div>
   );
-}
+});
+
+export default InvoiceForm;
