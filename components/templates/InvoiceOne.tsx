@@ -31,7 +31,7 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
   const brandLogoAlt = brandTitle || agencyName ? `${brandTitle || agencyName} logo` : "Brand logo";
 
   return (
-    <TemplateFrame inv={inv} className="mx-auto max-w-[960px] p-6 md:p-8 lg:p-12">
+    <TemplateFrame inv={inv} className="mx-auto mb-12 max-w-[960px] p-6 md:p-8 lg:p-12">
       <div className="space-y-10">
         <div className="flex flex-col gap-6 md:flex-row">
           <div className="flex-1">
@@ -207,6 +207,7 @@ export default function InvoiceOne({ inv }: { inv: Invoice }) {
           <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Terms & Conditions</div>
           <p className="mt-3 leading-relaxed">{inv.terms}</p>
         </div>
+        <div className="h-12" />
       </div>
     </TemplateFrame>
   );
